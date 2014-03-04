@@ -33,20 +33,67 @@ class Plant extends Organism {
     float maxFood;
 }
 
-class Animal extends Organism {
-    public Animal(int x, int y, float waterCapacity, float foodCapacity, float metabolicRate,
-                  float evolutionaryFitness, float speed, float agingRate, float size,
-                  Boolean isCarnivore, Boolean isHerbivore, Boolean isMale) {
-        super(x, y);
+class Location {
+    public Location() {
+        this.x = -1;
+        this.y = -1;
+    }
+    int x;
+    int y;
+    public int distance(int x, int y) {
+        if (this.x == -1 || this.y == -1) {
+            return 0;
+        }
+        return (int)hypot((double)x, (double)y);
+    }
+    public int xDirection(int x) {
+        if (this.x == -1) {
+            return 0;
+        }
+        return x - this.x;
+    }
+    public int yDirection(int y) {
+        if (this.y == -1) {
+            return 0;
+        }
+        return y - this.y;
+    }
+    public void memorize(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+enum AnimalSpecies {
+    public AnimalType(String species, float waterCapacity, float foodCapacity, float metabolicRate,
+                      float speed, float agingRate, float size, Boolean isCarnivore, Boolean isHerbivore) {
+        this.species = species;
         this.waterCapacity = waterCapacity;
         this.foodCapacity = foodCapacity;
         this.metabolicRate = metabolicRate;
-        this.evolutionaryFitness = evolutionaryFitness;
         this.speed = speed;
         this.agingRate = agingRate;
         this.size = size;
         this.isCarnivore = isCarnivore;
         this.isHerbivore = isHerbivore;
+    }
+    //      Species water  food   met   spd  entrp   size  carn    herb
+    BEAR(    "Bear", 2.0f, 9.0f, 0.5f, 0.3f, 0.03f, 10.0f, true,  false);
+    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.5f, 0.07f,  1.0f, false, true);
+
+    private float waterCapacity;
+    private float foodCapacity;
+    private float metabolicRate;
+    private float speed;
+    private float agingRate;
+    private Boolean isCarnivore;
+    private Boolean isHerbivore;
+}
+
+class Animal extends Organism implements Comparable {
+    public Animal(int x, int y, float evolutionaryFitness, Boolean isMale) {
+        super(x, y);
+        this.evolutionaryFitness = evolutionaryFitness;
         this.isMale = isMale;
         this.health = 1.0f;
         this.thirst = 0.0f;
@@ -58,24 +105,29 @@ class Animal extends Organism {
     // }
     private float health; // This represents injury. The health value used upstream depends on
                           // several factors
-    private float waterCapacity;
     private float thirst;
-    private float foodCapacity;
     private float hunger;
-    private float metabolicRate;
     private float evolutionaryFitness;
-    private float speed;
     private float age;
-    private float agingRate;
-    private float size;
-    private Boolean isCarnivore;
-    private Boolean isHerbivore;
     private Boolean isMale;
+    private AnimalSpecies attributes;
 
     public float health() { return health; } // Need a formula to calculate this
+    public float size() { return size; } // Need a formula to calculate this
 
     //Reproduction is not a critical feature; it will be added later
     //static Animal reproduce(Animal male, Animal female) { return new Animal(x(), y()); }
+
+    // This method decides who eats/drinks first
+    public int compareTo(Animal other) {
+        if (this.size() + this.evolutionaryFitness < other.size() + other.evolutionaryFitness) {
+            return -1;
+        }
+        if (this.size() + this.evolutionaryFitness > other.size() + other.evolutionaryFitness) {
+            return 1;
+        }
+        return 0;
+    }
 }
 
 public class SimulationEngine {
