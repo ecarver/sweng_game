@@ -1,0 +1,7 @@
+# Autosave files
+*#*
+*~
+
+# Hidden files other than this one
+.*
+!.gitignore
