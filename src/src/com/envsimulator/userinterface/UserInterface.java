@@ -32,14 +32,14 @@ public class UserInterface extends GLSurfaceView {
 		
 		render = new Render();
 		setRenderer(render);
-        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY); // Only update on request
+		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY); // Only update on request
         
-        // State of the user Interface
-        screen = Screen.START_MENU;
-        startOption = StartOption.NEW_SIM;
-        simMenuOpen = false;
-        xTile = 1;
-        yTile = 1;
+		// State of the user Interface
+		screen = Screen.START_MENU;
+		startOption = StartOption.NEW_SIM;
+		simMenuOpen = false;
+		xTile = 1;
+		yTile = 1;
 	}
 	
 	enum Screen {
@@ -153,7 +153,7 @@ public class UserInterface extends GLSurfaceView {
 		    	break;
 		}
 		return handled || super.onKeyDown(keyCode, event);
-    }
+	}
 	
 	protected void StepSimulation() {
 		engine.step();
@@ -161,6 +161,10 @@ public class UserInterface extends GLSurfaceView {
 	
 	protected void LoadSimulation() {
 		engine = startMenu.loadSimulation();
+	}
+	
+	protected void SaveSimulation() {
+		startMenu.saveSimulation();
 	}
 	
 	protected void NewSimulation() {
