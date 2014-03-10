@@ -11,13 +11,16 @@ public class Location {
     public Location() {
         this(-1,-1);
     }
-    int x;
-    int y;
+    private int x;
+    private int y;
     public int distance(int x, int y) {
         if (this.x == -1 || this.y == -1) {
             return 0;
         }
         return (int)hypot((double)x, (double)y);
+    }
+    public int distance(Location other) {
+        return this.distance(other.x(), other.y());
     }
     public int xDirection(int x) {
         if (this.x == -1) {
