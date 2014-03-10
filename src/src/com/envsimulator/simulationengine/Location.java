@@ -11,6 +11,10 @@ public class Location {
     public Location() {
         this(-1,-1);
     }
+    public Location(Location other) {
+        this.x = other.x;
+        this.y = other.y;
+    }
     private int x;
     private int y;
     public int distance(int x, int y) {

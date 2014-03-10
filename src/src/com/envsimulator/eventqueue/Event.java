@@ -7,10 +7,10 @@ public abstract class Event {
     public Event(int priority) {
         this.priority = priority;
     }
-    public Event() { this(5); }
+    public Event() { this(6); }
 
     public int priority;
     public static final enum TypePriority {
-        RENDER(0), INTERACT(2), MOVE(4), AGE(6);
+        RENDER(0), INTERACT(2), EAT_DRINK(3), MOVE(4), DEFERRED_MOVE(5), AGE(7);
     }
 }
