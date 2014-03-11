@@ -91,7 +91,7 @@ class Tile {
         }
         // When two animals occupy the same tile, they must interact
         if (animals.size == 2) {
-            eventList.add(new SimulationEvent(animals.first(), animals.second()));
+            eventList.add(new SimulationEvent(animals.first().id, animals.second().id));
         }
         // Next, we queue up individual events
         // Note that omnivores have the ability to eat twice in a step: once by killing another
