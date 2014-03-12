@@ -107,6 +107,10 @@ class Animal extends Organism implements Comparable {
         return (thirst/attributes.waterCapacity)*(float)location.distance(lastWater);
     }
 
+    public void completeMovement() {
+        this.movement -= 1.0f;
+    }
+
     //Reproduction is not a critical feature; it will be added later
     //static Animal reproduce(Animal male, Animal female) { return new Animal(x(), y()); }
 
@@ -146,16 +150,104 @@ class Animal extends Organism implements Comparable {
 }
 
 public class SimulationEngine {
-    public SimulationEngine() {
+    public SimulationEngine(int gridSizeX, int gridSizeY) {
         this.organisms = new HashMap();
+        this.grid = new Grid(gridSizeX, gridSizeY);
+        this.animalIdCount = 1;
+        this.plantIdCount = -1;
+        this.rng = new Random();
     }
 
-    public void step() {}
-    public void simulateOneEvent(SimulationEvent event) {}
+    // public void step() {
+        
+    // }
 
-    // This method adds an organism of the specified species to a random location with random attributes
-    public void addOrganism(AnimalSpecies species) {}
+    private int maxAnimals;
+    private int maxPlants;
+    private int animalIdCount;
+    private int plantIdCount;
 
+    private Random rng;
+
+    private void simulateInteraction(Animal first, Animal second) {
+        throw new UnsupportedOperationException();
+    }
+
+    private int simulateMovement(Animal candidate, int x, int y) {
+        int xGoal = candidate.location.x() + x;
+        int yGoal = candidate.location.y() + y;
+        // Prevent the organism from walking off the map
+        if (xGoal < 0 || xGoal > grid.xSize) {
+            xGoal = candidate.location.x();
+        }
+        if (yGoal < 0 || yGoal > grid.ySize) {
+            yGoal = candidate.location.y();
+        }
+        // Try to move to goal tile
+        if (!this.grid.tiles[xGoal][yGoal].fullAnimals()) {
+            this.grid.tiles[candidate.location.x()][candidate.location.y()]
+                .removeAnimal(candidate);
+            candidate.location.move(x, y);
+        }
+        else if (!this.grid.tiles[xGoal][candidate.location.y()].fullAnimals()) {
+            this.grid.tiles[candidate.location.x()][candidate.location.y()]
+                .removeAnimal(candidate);
+            candidate.location.move(x, 0);
+        }
+        else if (!this.grid.tiles[candidate.location.x()][yGoal].fullAnimals()) {
+            this.grid.tiles[candidate.location.x()][candidate.location.y()]
+                .removeAnimal(candidate);
+            candidate.location.move(0, y);
+        }
+        else {
+            return 1;
+        }
+        this.grid.tiles[candidate.location.x()][candiate.location.y()].addAnimal(candidate);
+        return 0;
+    }
+
+    public int simulateOneEvent(SimulationEvent event) {
+        switch (event.priority) {
+        case Event.TypePriority.RENDER:
+            return -1;
+        case Event.TypePriority.INTERACT:
+            this.simulateInteraction(organisms.get(event.firstOrganism),
+                                     organisms.get(event.secondOrganism));
+            return 0;
+        case Event.TypePriority.EAT:
+            throw new UnsupportedOperationException();
+            return 0;
+        case Event.TypePriority.DRINK:
+            throw new UnsupportedOperationException();
+            return 0;
+        case Event.TypePriority.MOVE:
+            Animal mover = organisms.get(event.firstOrganism);
+            if (!this.simulateMove(mover, event.x, event.y)) {
+                mover.completeMovement();
+            }
+            else {
+                // TODO: Add deferred moves
+            }
+            return 0;
+        case Event.TypePriority.AGE:
+            throw new UnsupportedOperationException();
+            return 0;
+        default:
+            return (int)event.priority;
+    }
+
+    // This method adds an organism of the specified species to a random location
+    public void addAnimal(AnimalSpecies species) {
+        organisms.put(animalIdCount++, new Animal(this.rng.nextInt(grid.xSize)+1,
+                                                  this.rng.nextInt(grid.ySize)+1, species));
+    }
+
+    public static Boolean isAnimal(int organismId) {
+        return (organismId > 0);
+    }
+    public static Boolean isPlant(int organismId) {
+        return (organismId < 0);
+    }
     HashMap organisms;
     Grid grid;
 }

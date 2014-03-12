@@ -42,6 +42,10 @@ public class Location {
         this.x = x;
         this.y = y;
     }
+    public void move(int x, int y) {
+        this.x = this.x + x;
+        this.y = this.y + y;
+    }
     public Boolean hasMemory() {
         return (this.x != -1 && this.y != -1);
     }

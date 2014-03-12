@@ -11,21 +11,21 @@ public static final int plantCapacity = 2;
 
 public class Grid {
     public Grid(int xSize, int ySize) {
-        this.tileMatrix = new Tile[xSize][ySize];
+        this.tiles = new Tile[xSize][ySize];
         this.xSize = xSize;
         this.ySize = ySize;
     }
 
-    Tile[][] tileMatrix;
-    private int xSize;
-    private int ySize;
+    Tile[][] tiles;
+    int xSize;
+    int ySize;
 
     // Gets simulation events for all tiles
     List<SimulationEvent> getEvents() {
         List<SimulationEvent> events = new List<SimulationEvent>
         for (int y = 0; y < ySize; y++) {
             for (int x = 0; x < xSize; x++) {
-                events.addAll(tileMatrix[x][y].getEvents());
+                events.addAll(tiles[x][y].getEvents());
             }
         }
         return events;
@@ -110,7 +110,7 @@ class Tile {
                 if (!localPlants.remove(biggestPlant)) {
                     throw new IndexOutOfBoundsException();
                 }
-                eventList.add(animal.id, biggestPlant);
+                eventList.add(animal.id, biggestPlant.id);
             }
             // Also, every animal will try to drink
             eventList.add(animal.id, this.environmentType.hasWater);

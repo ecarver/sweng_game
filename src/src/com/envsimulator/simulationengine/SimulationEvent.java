@@ -5,7 +5,12 @@ package com.envsimulator.eventqueue;
 
 public class SimulationEvent extends Event {
     public SimulationEvent(int firstOrganism, int secondOrganism) {
-        super((int)Event.TypePriority.INTERACT);
+        if (SimulationEngine.isAnimal(secondOrganism)) {
+            super((int)Event.TypePriority.INTERACT);
+        }
+        else {
+            super((int)Event.TypePriority.EAT);
+        }
         this.firstOrganism = firstOrganism;
         this.secondOrganism = secondOrganism;
     }
@@ -14,15 +19,12 @@ public class SimulationEvent extends Event {
         this.firstOrganism = organism;
         this.secondOrganism = -1;
     }
-    public SimulationEvent(int organism, float food) {
-        super((int)Event.TypePriority.EAT);
-        this.firstOrganism = organism;
-        this.secondOrganism = -1;
-    }
     public SimulationEvent(int organism, int x, int y) {
         super((int)Event.TypePriority.MOVE);
         this.firstOrganism = organism;
         this.secondOrganism = -1;
+        this.x = x;
+        this.y = y;
     }
     public SimulationEvent(int organism) {
         super((int)Event.TypePriority.AGE);
@@ -32,4 +34,6 @@ public class SimulationEvent extends Event {
 
     int firstOrganism;
     int secondOrganism;
+    public int x;
+    public int y;
 }
