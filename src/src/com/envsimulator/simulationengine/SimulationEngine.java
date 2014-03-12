@@ -224,10 +224,17 @@ public class SimulationEngine {
             Animal mover = organisms.get(event.firstOrganism);
             if (!this.simulateMove(mover, event.x, event.y)) {
                 mover.completeMovement();
+                return 0;
             }
-            else {
-                // TODO: Add deferred moves
+            // TODO: Add deferred moves
+            event.priority++;
+            return 1;
+        case Event.TypePriority.DEFERRED_MOVE:
+            Animal mover = organisms.get(event.firstOrganism);
+            if (!this.simulateMove(mover, event.x, event.y)) {
+                mover.completeMovement();
             }
+            // If the animal still can't move, tough shit. Try again next step.
             return 0;
         case Event.TypePriority.AGE:
             throw new UnsupportedOperationException();
