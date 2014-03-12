@@ -11,6 +11,6 @@ public abstract class Event {
 
     public int priority;
     public static final enum TypePriority {
-        RENDER(0), INTERACT(2), DRINK(3), EAT(4), MOVE(5), AGE(7);
+        RENDER(0), INTERACT(2), DRINK(3), EAT(4), MOVE(5), DEFERRED_MOVE(6), AGE(7);
     }
 }
