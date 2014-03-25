@@ -9,6 +9,7 @@ abstract class Organism {
     public Organism(int x, int y) {
         this.location = new Location(x, y);
     }
+    abstract int age();
     Location location;
     protected String species;
     @Override public String toString() { return species; }
@@ -24,6 +25,12 @@ class Plant extends Organism {
     }
     public Plant(int x, int y, float maxFood, float growthRate) {
         this(x, y, maxFood, growthRate, 0.0f);
+    }
+    int age() {
+        this.food += this.growthRate;
+        if (this.food >= this.maxFood) {
+            this.food = this.maxFood;
+        }
     }
     float growthRate;
     float food;
@@ -89,7 +96,27 @@ class Animal extends Organism implements Comparable {
 
     private Random rng;
 
-    public float health() { return health; } // Need a formula to calculate this
+    int age() {
+        hunger += attributes.metabolic_rate;
+        thirst += attributes.metabolic_rate;
+        if (hunger > foodCapacity) {
+            health -= hunger - attributes.foodCapacity;
+        }
+        if (thirst > waterCapacity) {
+            health -= thirst - attributes.waterCapcity;
+        }
+
+        age += attributes.agingRate;
+
+        if (health <= 0.0f || age > 1.0f) {
+            // The animal died
+            return 1;
+        }
+        movement += attributes.speed;
+        return 0;
+    }
+
+    public float getHealth() { return health; } // Need a formula to calculate this
     public float size() { return size; } // Need a formula to calculate this
 
     // The follwing two methods calculate how much the animal wants to go for water/food
@@ -225,11 +252,13 @@ public class SimulationEngine {
                 plant.food -= eater.hunger;
                 eater.hunger = 0;
             }
+            eater.lastFood.memorize(eater.location);
             return 0;
         case Event.TypePriority.DRINK:
             Animal drinker = organisms.get(event.firstOrganism);
             // For now, we will just assume an unlimited water supply
             drinker.thirst = 0;
+            eater.lastWater.memorize(eater.location);
             return 0;
         case Event.TypePriority.MOVE:
             Animal mover = organisms.get(event.firstOrganism);
@@ -237,7 +266,6 @@ public class SimulationEngine {
                 mover.completeMovement();
                 return 0;
             }
-            // TODO: Add deferred moves
             event.priority++;
             return 1;
         case Event.TypePriority.DEFERRED_MOVE:
@@ -248,7 +276,19 @@ public class SimulationEngine {
             // If the animal still can't move, tough shit. Try again next step.
             return 0;
         case Event.TypePriority.AGE:
-            throw new UnsupportedOperationException();
+            Organism organism = organisms.get(event.firstOrganism);
+            if (organism.age()) {
+                // The animal died
+                if ( isAnimal(event.firstOrganism) ) {
+                    grid.tiles[organism.location.x()][organism.location.y()]
+                        .removeAnimal((Animal)organism);
+                }
+                else {
+                    grid.tiles[organism.location.x()][organism.location.y()]
+                        .removePlant((Plant)organism);
+                }
+                organisms.remove(organism);
+            }
             return 0;
         default:
             return (int)event.priority;

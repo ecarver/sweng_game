@@ -42,6 +42,10 @@ public class Location {
         this.x = x;
         this.y = y;
     }
+    public void memorize(Location other) {
+        this.x = other.x;
+        this.y = other.y;
+    }
     public void move(int x, int y) {
         this.x = this.x + x;
         this.y = this.y + y;
