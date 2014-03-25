@@ -77,7 +77,7 @@ class Animal extends Organism implements Comparable {
     private float health; // This represents injury. The health value used upstream depends on
                           // several factors
     private float thirst;
-    private float hunger;
+    float hunger;
     private float evolutionaryFitness;
     private float age;
     private float movement;
@@ -215,10 +215,21 @@ public class SimulationEngine {
                                      organisms.get(event.secondOrganism));
             return 0;
         case Event.TypePriority.EAT:
-            throw new UnsupportedOperationException();
+            Animal eater = organisms.get(event.firstOrganism);
+            Plant plant = organisms.get(event.secondOrganism);
+            if (eater.hunger > plant.food) {
+                eater.hunger -= plant.food;
+                plant.food = 0;
+            }
+            else {
+                plant.food -= eater.hunger;
+                eater.hunger = 0;
+            }
             return 0;
         case Event.TypePriority.DRINK:
-            throw new UnsupportedOperationException();
+            Animal drinker = organisms.get(event.firstOrganism);
+            // For now, we will just assume an unlimited water supply
+            drinker.thirst = 0;
             return 0;
         case Event.TypePriority.MOVE:
             Animal mover = organisms.get(event.firstOrganism);
