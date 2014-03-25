@@ -16,7 +16,7 @@ abstract class Organism {
     protected int id;
 }
 
-class Plant extends Organism {
+public class Plant extends Organism {
     public Plant(int x, int y, float maxFood, float growthRate, float food) {
         super(x, y);
         this.maxFood = maxFood;
@@ -35,9 +35,26 @@ class Plant extends Organism {
     float growthRate;
     float food;
     float maxFood;
+    
+    //***************Begin Properties*******************
+    public float GetGrowthRate()
+    {
+    	return growthRate;
+    }
+    
+    public float GetFood()
+    {
+    	return food;
+    }
+    
+    public float GetMaxFood()
+    {
+    	return maxFood;
+    }
+    //****************End Properties*******************
 }
 
-enum AnimalSpecies {
+public enum AnimalSpecies {
     public AnimalSpecies(String species, float waterCapacity, float foodCapacity, float metabolicRate,
                       float speed, float agingRate, float size, Boolean isCarnivore, Boolean isHerbivore) {
         this.species = species;
@@ -63,7 +80,7 @@ enum AnimalSpecies {
     private Boolean isHerbivore;
 }
 
-class Animal extends Organism implements Comparable {
+public class Animal extends Organism implements Comparable {
     public Animal(int x, int y, AnimalSpecies attributes, float evolutionaryFitness, Boolean isMale) {
         super(x, y);
         this.evolutionaryFitness = evolutionaryFitness;
@@ -116,9 +133,68 @@ class Animal extends Organism implements Comparable {
         return 0;
     }
 
-    public float getHealth() { return health; } // Need a formula to calculate this
+    public float health() { return health; } // Need a formula to calculate this
     public float size() { return size; } // Need a formula to calculate this
 
+    //***************Begin Properties*******************
+    
+    public float GetHealth()
+    {
+    	return health;
+    }
+    
+    public float GetThirst()
+    {
+    	return thirst;
+    }
+    
+    public float GetHunger()
+    {
+    	return hunger;
+    }
+    
+    public float GetEvolutionaryFitness()
+    {
+    	return evolutionaryFitness;
+    }
+
+    public float GetAge()
+    {
+    	return age;
+    }
+    
+    public float GetMovement()
+    {
+    	return movement;
+    }
+
+    public Boolean GetGender()
+    {
+    	return isMale;
+    }
+
+    public AnimalSpecies GetSpecies()
+    {
+    	return attributes;
+    }
+
+    public String GetLastFood()
+    {
+    	return Integer.toString(lastFood.x()) + "x" + Integer.toString(lastFood.y()) ;
+    }
+
+    public String GetLastWater()
+    {
+    	return Integer.toString(lastWater.x()) + "x" + Integer.toString(lastWater.y()) ;
+    }
+
+    public Random Getrng()
+    {
+    	return rng;
+    }
+    
+    //****************End Properties********************
+    
     // The follwing two methods calculate how much the animal wants to go for water/food
     private float foodDesire() {
         if (!lastFood.hasMemory()) {
@@ -307,5 +383,5 @@ public class SimulationEngine {
         return (organismId < 0);
     }
     HashMap organisms;
-    Grid grid;
+    public Grid grid;
 }

@@ -16,10 +16,24 @@ public class Grid {
         this.ySize = ySize;
     }
 
-    Tile[][] tiles;
+    public Tile[][] tiles;
     int xSize;
     int ySize;
 
+ //***************Begin Properties*******************
+    
+    public int GetXSize()
+    {
+    	return xSize;
+    }
+    
+    public int GetYSize()
+    {
+    	return ySize;
+    }
+    
+    //***************End Properties*******************
+    
     // Gets simulation events for all tiles
     List<SimulationEvent> getEvents() {
         List<SimulationEvent> events = new List<SimulationEvent>
@@ -32,7 +46,7 @@ public class Grid {
     }
 }
 
-enum TileEnvironmentType {
+public enum TileEnvironmentType {
     DESERT(false), FOREST(true);
     public TileEnvironmentType(Boolean hasWater) {
         this.hasWater = hasWater;
@@ -40,7 +54,7 @@ enum TileEnvironmentType {
     public Boolean hasWater;
 }
 
-class Tile {
+public class Tile {
     public Tile() {
         this((TileEnvironmentType)0);
     }
@@ -52,6 +66,33 @@ class Tile {
 
     TileEnvironmentType environmentType;
 
+    //***************Begin Properties*******************
+    
+    public TileEnvironmentType GetEnvironmentType()
+    {
+    	return environmentType;
+    }
+    
+    public Animal[] GetAnimals()
+    {
+    	StringBuilder AnimalData = new StringBuilder();
+    	Animal[] AnimalArray; 
+    	animals.toArray(AnimalArray);
+    	
+    	return AnimalArray;
+    }
+    
+    public Plant[] GetPlants()
+    {
+    	StringBuilder PlatData = new StringBuilder();
+    	Plant[] PlantArray; 
+    	plants.toArray(PlantArray);
+    	
+    	return PlantArray;
+    }
+    
+    //***************End Properties*******************
+    
     private Set<Animal> animals;
     private Set<Plant> plants;
 
