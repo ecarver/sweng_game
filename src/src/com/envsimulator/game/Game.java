@@ -12,12 +12,12 @@ public class Game extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	// requesting to turn the title OFF
-    	requestWindowFeature(Window.FEATURE_NO_TITLE);
-    	// making it full screen
-    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-    			 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    	
+        // requesting to turn the title OFF
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // making it full screen
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         userInterface = new UserInterface(this);
         setContentView(userInterface);
     }
