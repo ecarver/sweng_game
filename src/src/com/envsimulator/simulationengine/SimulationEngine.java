@@ -39,7 +39,8 @@ class Plant extends Organism {
 
 enum AnimalSpecies {
     public AnimalSpecies(String species, float waterCapacity, float foodCapacity, float metabolicRate,
-                      float speed, float agingRate, float size, Boolean isCarnivore, Boolean isHerbivore) {
+                         float speed, float agingRate, float size, float aggressiveness,
+                         Boolean isCarnivore, Boolean isHerbivore) {
         this.species = species;
         this.waterCapacity = waterCapacity;
         this.foodCapacity = foodCapacity;
@@ -49,10 +50,11 @@ enum AnimalSpecies {
         this.size = size;
         this.isCarnivore = isCarnivore;
         this.isHerbivore = isHerbivore;
+        this.aggressiveness = aggressiveness;
     }
-    //      Species water  food   met   spd  entrp   size  carn    herb
-    BEAR(    "Bear", 2.0f, 9.0f, 0.5f, 0.3f, 0.03f, 10.0f, true,  false);
-    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.5f, 0.07f,  1.0f, false, true);
+    //      Species water  food   met   spd  entrp   size  aggr   carn    herb
+    BEAR(    "Bear", 2.0f, 9.0f, 0.5f, 0.3f, 0.03f, 10.0f, 0.2f,  true,  false);
+    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.5f, 0.07f,  1.0f, 0.0f, false,   true);
 
     private float waterCapacity;
     private float foodCapacity;
@@ -61,6 +63,7 @@ enum AnimalSpecies {
     private float agingRate;
     private Boolean isCarnivore;
     private Boolean isHerbivore;
+    private float aggressiveness;
 }
 
 class Animal extends Organism implements Comparable {
@@ -68,7 +71,7 @@ class Animal extends Organism implements Comparable {
         super(x, y);
         this.evolutionaryFitness = evolutionaryFitness;
         this.isMale = isMale;
-        this.health = 1.0f;
+        this.injury_health = 1.0f;
         this.thirst = 0.0f;
         this.hunger = 0.0f;
         this.age = 0.0f;
@@ -81,7 +84,7 @@ class Animal extends Organism implements Comparable {
     // public Animal(int x, int y) {
     //     this(x, y);
     // }
-    private float health; // This represents injury. The health value used upstream depends on
+    private float injury_health; // This represents injury. The health value used upstream depends on
                           // several factors
     private float thirst;
     float hunger;
@@ -96,39 +99,69 @@ class Animal extends Organism implements Comparable {
 
     private Random rng;
 
+    void fight(Animal other) {
+        // This animal is the aggressor. The aggressor gets a slight bonus in the fight
+        float damageToOther = this.health()*(this.size()-other.size())*
+            (this.evolutionaryFitness-other.evolutionaryFitness) + 0.05f;
+        float damageToThis = other.health()*(other.size()-this.size())*
+            (other.evolutionaryFitness-this.evolutionaryFitness);
+
+        if (damageToOther > 0) {
+            other.injury_health -= damageToOther;
+        }
+        if (damageToThis > 0) {
+            this.injury_health -= damageToThis;
+        }
+    }
+
     int age() {
         hunger += attributes.metabolic_rate;
         thirst += attributes.metabolic_rate;
-        if (hunger > foodCapacity) {
-            health -= hunger - attributes.foodCapacity;
+        if (hunger > attributes.foodCapacity) {
+            injury_health -= hunger - attributes.foodCapacity;
         }
-        if (thirst > waterCapacity) {
-            health -= thirst - attributes.waterCapcity;
+        if (thirst > attributes.waterCapacity) {
+            injury_health -= thirst - attributes.waterCapcity;
         }
 
+        movement += attributes.speed;
         age += attributes.agingRate;
 
-        if (health <= 0.0f || age > 1.0f) {
+        if (injury_health <= 0.0f || age > 1.0f) {
             // The animal died
             return 1;
+        }
+        else {
+            // The animal heals a bit
+            injury_health += attributes.metabolism/10.0f;
+            if (injury_health > 1.0f) {
+                injury_health = 1.0f;
+            }
         }
         movement += attributes.speed;
         return 0;
     }
 
-    public float getHealth() { return health; } // Need a formula to calculate this
-    public float size() { return size; } // Need a formula to calculate this
+    public float health() { return injury_health; } // Need a formula to calculate this
+    public float size() {
+        // Let's assume that an animal is at its prime in the middle of life,
+        // and its size increases steadily for the first half of its life
+        // and decreases steadily for the second half of its life
+        // Additionally, I'll assume the minimum size of an animal is 50% of its nominal size
+        float ageScalingFactor = 1-abs(age-0.5f);
+        return attributes.size*ageScalingFactor;
+    }
 
     // The follwing two methods calculate how much the animal wants to go for water/food
     private float foodDesire() {
-        if (!lastFood.hasMemory()) {
+        if (!lastFood.hasMemory() || hunger < attributes.foodCapacity/2) {
             return -1.0f;
         }
         return (hunger/attributes.foodCapacity)*(float)location.distance(lastFood);
     }
 
     private float waterDesire() {
-        if (!lastWater.hasMemory()) {
+        if (!lastWater.hasMemory() || thirst < attributes.waterCapacity/2) {
             return -1.0f;
         }
         return (thirst/attributes.waterCapacity)*(float)location.distance(lastWater);
@@ -197,7 +230,72 @@ public class SimulationEngine {
     private Random rng;
 
     private void simulateInteraction(Animal first, Animal second) {
-        throw new UnsupportedOperationException();
+        // Either the animals are the same species or different species
+        if ( first.attributes.species.equals(second.attributes.species) ) {
+            // We'll start by excluding cannibalism
+            // So there can be a peaceful meeting or a territorial fight
+            // Let's say that territorial fights are not very likely, but can be instigated by
+            //   either animal
+            // Some animals have no aggressiveness, so they will never fight each other
+            // Others are encouraged/discouraged by the size of the other
+
+            // We won't have any animals die during the fight. Assume they die later from blood loss
+            //   or something. However, their injury level does affect their effectiveness
+
+            // TODO: Push "fight!" messages up
+            if (first.rng.nextFloat() >
+                1-first.attributes.aggressiveness - second.size() + first.size()) {
+                // This one wants to fight
+                first.fight(second);
+            }
+            if (second.rng.nextFloat() >
+                     1-second.attributes.aggressiveness - first.size() + second.size()) {
+                second.fight(first);
+            }
+            // Otherwise, peaceful meeting so do nothing
+        }
+        else {
+            // The animals are different species, so one may be able to eat the other
+            // Let's exclude carnivores eating other carnivores for now
+            // An animal can only eat a smaller animal
+            // The carnivore's ability to catch and eat an herbivore depends mostly on evolutionary
+            //   fitness and random chance
+            if (first.attributes.carnivore) {
+                if (second.attributes.herbivore) {
+                    if (first.size() > second.size() && first.foodDesire() > 0.0f) {
+                        // The first will try to eat the second
+                        if (first.evolutionaryFitness + first.rng.nextFloat() >
+                            second.evolutionaryFitness + second.rng.nextFloat()) {
+                            // The second dies
+                            second.injury_health -= 10.0f;
+                            // The first eats
+                            first.hunger -= second.size();
+                            if ( first.hunger < 0.0f ) {
+                                first.hunger = 0.0f;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (second.attributes.carnivore) {
+                if (first.attributes.herbivore) {
+                    if (second.size() > first.size() && second.foodDesire() > 0.0f) {
+                        // The second will try to eat the first
+                        if (second.evolutionaryFitness + second.rng.nextFloat() >
+                            first.evolutionaryFitness + first.rng.nextFloat()) {
+                            // The first dies. It will be "cleaned up" by the aging step
+                            first.injury_health -= 10.0f;
+                            // The second eats
+                            second.hunger -= first.size();
+                            if ( second.hunger < 0.0f ) {
+                                second.hunger = 0.0f;
+                            }
+                        }
+                    }
+                }
+            }
+
     }
 
     private int simulateMovement(Animal candidate, int x, int y) {
@@ -297,7 +395,14 @@ public class SimulationEngine {
     // This method adds an organism of the specified species to a random location
     public void addAnimal(AnimalSpecies species) {
         organisms.put(animalIdCount++, new Animal(this.rng.nextInt(grid.xSize)+1,
-                                                  this.rng.nextInt(grid.ySize)+1, species));
+                                                  this.rng.nextInt(grid.ySize)+1, species,
+                                                  this.rng.nextFloat(), true));
+    }
+    public void addPlant() {
+        organisms.put(plantIdCount--, new Plant(this.rng.nextInt(grid.xSize)+1,
+                                                this.rng.nextInt(grid.ySize)+1,
+                                                this.rng.nextFloat()*2+0.5f,
+                                                this.rng.nextFloat()/2));
     }
 
     public static Boolean isAnimal(int organismId) {
