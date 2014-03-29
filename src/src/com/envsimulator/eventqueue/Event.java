@@ -7,10 +7,17 @@ public abstract class Event {
     public Event(int priority) {
         this.priority = priority;
     }
-    public Event() { this(6); }
+    public Event() { this(AGE+1); }
 
     public int priority;
-    public static final enum TypePriority {
-        RENDER(0), INTERACT(2), DRINK(3), EAT(4), MOVE(5), DEFERRED_MOVE(6), AGE(7);
+    public static enum TypePriority {
+        RENDER, INTERACT, DRINK, EAT, MOVE, DEFERRED_MOVE, AGE;
     }
+    public static final int RENDER = 0;
+    public static final int INTERACT = 2;
+    public static final int DRINK = 3;
+    public static final int EAT = 4;
+    public static final int MOVE = 5;
+    public static final int DEFERRED_MOVE = 6;
+    public static final int AGE = 7;
 }

@@ -1,3 +1,5 @@
+package com.envsimulator.renderer;
+
 class RenderLink {
 	private String _tag;
 	private String _filename;

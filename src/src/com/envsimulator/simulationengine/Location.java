@@ -21,7 +21,7 @@ public class Location {
         if (this.x == -1 || this.y == -1) {
             return 0;
         }
-        return (int)hypot((double)x, (double)y);
+        return (int)Math.hypot((double)x, (double)y);
     }
     public int distance(Location other) {
         return this.distance(other.x(), other.y());

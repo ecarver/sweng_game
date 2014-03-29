@@ -3,11 +3,13 @@
 
 package com.envsimulator.simulationengine;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.List;
+import java.util.TreeSet;
 
-public static final int animalCapacity = 2;
-public static final int plantCapacity = 2;
+import com.envsimulator.eventqueue.Event;
+import com.envsimulator.eventqueue.SimulationEvent;
 
 public class Grid {
     public Grid(int xSize, int ySize) {
@@ -24,19 +26,19 @@ public class Grid {
     
     public int GetXSize()
     {
-    	return xSize;
+        return xSize;
     }
     
     public int GetYSize()
     {
-    	return ySize;
+        return ySize;
     }
     
     //***************End Properties*******************
     
     // Gets simulation events for all tiles
     List<SimulationEvent> getEvents() {
-        List<SimulationEvent> events = new List<SimulationEvent>
+        List<SimulationEvent> events = new ArrayList<SimulationEvent>();
         for (int y = 0; y < ySize; y++) {
             for (int x = 0; x < xSize; x++) {
                 events.addAll(tiles[x][y].getEvents());
@@ -46,22 +48,26 @@ public class Grid {
     }
 }
 
-public enum TileEnvironmentType {
+enum TileEnvironmentType {
     DESERT(false), FOREST(true);
-    public TileEnvironmentType(Boolean hasWater) {
+    TileEnvironmentType(Boolean hasWater) {
         this.hasWater = hasWater;
     }
     public Boolean hasWater;
 }
 
-public class Tile {
+class Tile {
+
+    public static final int ANIMAL_CAPACITY = 2;
+    public static final int PLANT_CAPACITY = 2;
+
     public Tile() {
-        this((TileEnvironmentType)0);
+        this(TileEnvironmentType.DESERT);
     }
     public Tile(TileEnvironmentType environmentType) {
         this.environmentType = environmentType;
-        animals = new TreeSet<Animal>;
-        plants = new TreeSet<Plant>;
+        animals = new TreeSet<Animal>();
+        plants = new TreeSet<Plant>();
     }
 
     TileEnvironmentType environmentType;
@@ -70,25 +76,17 @@ public class Tile {
     
     public TileEnvironmentType GetEnvironmentType()
     {
-    	return environmentType;
+        return environmentType;
     }
     
-    public Animal[] GetAnimals()
+    public Set<Animal> GetAnimals()
     {
-    	StringBuilder AnimalData = new StringBuilder();
-    	Animal[] AnimalArray; 
-    	animals.toArray(AnimalArray);
-    	
-    	return AnimalArray;
+        return animals;
     }
     
-    public Plant[] GetPlants()
+    public Set<Plant> GetPlants()
     {
-    	StringBuilder PlatData = new StringBuilder();
-    	Plant[] PlantArray; 
-    	plants.toArray(PlantArray);
-    	
-    	return PlantArray;
+        return plants;
     }
     
     //***************End Properties*******************
@@ -96,18 +94,18 @@ public class Tile {
     private Set<Animal> animals;
     private Set<Plant> plants;
 
-    public Boolean fullAnimals() { return animals.size() >= animalCapacity; }
-    public Boolean fullPlants() { return plants.size() >= plantCapacity; }
+    public Boolean fullAnimals() { return animals.size() >= ANIMAL_CAPACITY; }
+    public Boolean fullPlants() { return plants.size() >= PLANT_CAPACITY; }
 
     void addAnimal(Animal animal) {
-        if (this.animals.size() >= animalCapacity) {
+        if (this.animals.size() >= ANIMAL_CAPACITY) {
             throw new IndexOutOfBoundsException();
         }
         this.animals.add(animal);
     }
 
     void addPlant(Plant plant) {
-        if (this.plants.size() >= plantCapacity) {
+        if (this.plants.size() >= PLANT_CAPACITY) {
             throw new IndexOutOfBoundsException();
         }
         this.plants.add(plant);
@@ -123,16 +121,21 @@ public class Tile {
     // This makes a list of events that should be added to the priority queue for the next step
     // This method should be called at the beginning of every step
     List<SimulationEvent> getEvents() {
-        List<SimulationEvent> eventList = new List<SimulationEvent>;
+        List<SimulationEvent> eventList = new ArrayList<SimulationEvent>();
         // It is possible to implement interactions among three or more animals, but this can be
         // implemented later. We will need to enqueue interaction events between each combination
         // of two animals in the set.
-        if (animalCapacity != 2) {
-            throw new UnsupportedOperationException;
+        if (ANIMAL_CAPACITY != 2) {
+            throw new UnsupportedOperationException();
         }
         // When two animals occupy the same tile, they must interact
-        if (animals.size == 2) {
-            eventList.add(new SimulationEvent(animals.first().id, animals.second().id));
+        if (animals.size() == 2) {
+            int[] ids = new int[animals.size()];
+            int i = 0;
+            for (Animal animal : animals) {
+                ids[i++] = animal.id;
+            }
+            eventList.add(new SimulationEvent(ids[0], ids[1], Event.INTERACT, true));
         }
         // Next, we queue up individual events
         // Note that omnivores have the ability to eat twice in a step: once by killing another
@@ -141,8 +144,8 @@ public class Tile {
         Set<Plant> localPlants = new TreeSet<Plant>(this.plants);
         for (Animal animal : this.animals) {
             // Herbivores will try to eat the largest plant
-            if (animal.isHerbivore) {
-                Plant biggestPlant = localPlants.first();
+            if (animal.attributes.isHerbivore) {
+                Plant biggestPlant = (Plant)localPlants.toArray()[0];
                 for (Plant currentPlant : localPlants) {
                     if (currentPlant.food > biggestPlant.food) {
                         biggestPlant = currentPlant;
@@ -151,10 +154,10 @@ public class Tile {
                 if (!localPlants.remove(biggestPlant)) {
                     throw new IndexOutOfBoundsException();
                 }
-                eventList.add(animal.id, biggestPlant.id);
+                eventList.add(new SimulationEvent(animal.id, biggestPlant.id, Event.EAT, true));
             }
             // Also, every animal will try to drink
-            eventList.add(animal.id, this.environmentType.hasWater);
+            eventList.add(new SimulationEvent(animal.id, this.environmentType.hasWater));
             // And while we're at it, let's set up move events for each animal that is eligible
             if (animal.movement >= 1.0f) {
                 Location goal = animal.movementGoal();
@@ -164,11 +167,11 @@ public class Tile {
             }
             // Finally, every animal's stats must be updated for the passing of time.
             // We call this "aging" the animal
-            eventList.add(animal.id);
+            eventList.add(new SimulationEvent(animal.id));
         }
         // We must also age all plants
         for (Plant plant : this.plants) {
-            eventList.add(plant.id);
+            eventList.add(new SimulationEvent(plant.id));
         }
         return eventList;
     }
