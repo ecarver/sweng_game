@@ -1,6 +1,6 @@
 package com.envsimulator.userinterface;
 
-import com.envsimulator.simulationengine;
+import com.envsimulator.simulationengine.*;
 
 import tv.ouya.console.api.OuyaController;
 import android.content.Context;

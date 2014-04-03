@@ -9,7 +9,7 @@ import java.util.PriorityQueue;
 public class EventQueue {
     Comparator<Event> prioritizer = new EventComparator();
     public EventQueue() {
-        queue = new PriorityQueue(32, prioritizer);
+        queue = new PriorityQueue<Event>(32, prioritizer);
     }
 
     private PriorityQueue<Event> queue;

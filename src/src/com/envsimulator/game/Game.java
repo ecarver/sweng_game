@@ -1,6 +1,6 @@
 package com.envsimulator.game;
 
-import com.envsimulator.userinterface;
+import com.envsimulator.userinterface.*;
 
 import android.app.Activity;
 import android.os.Bundle;
