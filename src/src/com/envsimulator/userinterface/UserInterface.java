@@ -176,6 +176,7 @@ public class UserInterface extends GLSurfaceView {
     protected void BeginSimulation() {
         simLoop = new MainSimulationLoop(this, engine);
         simLoop.setRunning(true);
+        simLoop.start();
     }
 
     protected void StopSimulation() {
