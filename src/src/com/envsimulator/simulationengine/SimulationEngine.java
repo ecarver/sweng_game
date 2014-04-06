@@ -496,6 +496,6 @@ public class SimulationEngine {
     public static Boolean isPlant(int organismId) {
         return (organismId < 0);
     }
-    HashMap<Integer,Organism> organisms;
+    public HashMap<Integer,Organism> organisms;
     public Grid grid;
 }

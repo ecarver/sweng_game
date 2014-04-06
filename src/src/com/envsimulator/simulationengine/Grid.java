@@ -97,6 +97,23 @@ class Tile {
     public Boolean fullAnimals() { return animals.size() >= ANIMAL_CAPACITY; }
     public Boolean fullPlants() { return plants.size() >= PLANT_CAPACITY; }
 
+    public ArrayList<Integer> getOrganismIds() {
+        ArrayList<Integer> ret = new ArrayList<Integer>();
+        for (Animal animal : this.animals) {
+            ret.add(animal.id);
+        }
+        for (int i = animals.size(); i < ANIMAL_CAPACITY; i++) {
+            red.add(i, 0);
+        }
+        for (Plant plant : this.plants) {
+            ret.add(plant.id);
+        }
+        for (int i = plants.size(); i < PLANT_CAPACITY; i++) {
+            red.add(i, 0);
+        }
+        return ret;
+    }
+
     void addAnimal(Animal animal) {
         if (this.animals.size() >= ANIMAL_CAPACITY) {
             throw new IndexOutOfBoundsException();
