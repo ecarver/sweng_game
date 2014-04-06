@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
         // 
         
         _textQueue = new TextQueue();
-        _textQueue.addText(findViewById(R.id.gamelayout), "YOLO", 10, 10, 20, 
+        _textQueue.addText(findViewById(R.id.gamelayout), "ALPHA", 10, 10, 20, 
 			10, 10, 10, 10);
         
 
@@ -77,7 +77,7 @@ public class MainActivity extends Activity {
 		//20
 		//66 neter
 		if(_renderList.getScreen() == _renderList.START_MENU) {
-			if(keyCode == 4) {
+			if(keyCode == 19) {
 				if(_startMenuState == StartMenuState.START_SIMULATION_SELECTED) {
 					_renderList.deleteRenderLink("startmenuselect");
 					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 42.f));
@@ -95,6 +95,42 @@ public class MainActivity extends Activity {
 					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 129.f));
 					_startMenuState = StartMenuState.HOW_TO_PLAY_SELECTED;
 				}
+			} else 	if(keyCode == 20) {
+				if(_startMenuState == StartMenuState.START_SIMULATION_SELECTED) {
+					_renderList.deleteRenderLink("startmenuselect");
+					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 216.f));
+					_startMenuState = StartMenuState.LOAD_SIMULATION_SELECTED;
+				} else if(_startMenuState == StartMenuState.LOAD_SIMULATION_SELECTED) {
+					_renderList.deleteRenderLink("startmenuselect");
+					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 129.f));
+					_startMenuState = StartMenuState.HOW_TO_PLAY_SELECTED;
+				} else if(_startMenuState == StartMenuState.HOW_TO_PLAY_SELECTED) {
+					_renderList.deleteRenderLink("startmenuselect");
+					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 42.f));
+					_startMenuState = StartMenuState.CREDITS_SELECTED;
+				} else if(_startMenuState == StartMenuState.CREDITS_SELECTED) {
+					_renderList.deleteRenderLink("startmenuselect");
+					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 303.f));
+					_startMenuState = StartMenuState.START_SIMULATION_SELECTED;
+				}
+			} else 	if(keyCode == 66) {
+				if(_startMenuState == StartMenuState.START_SIMULATION_SELECTED) {
+					Toast.makeText(this.getApplicationContext(), "Start Simulation", 
+							Toast.LENGTH_LONG).show(); 
+				} else if(_startMenuState == StartMenuState.LOAD_SIMULATION_SELECTED) {
+					Toast.makeText(this.getApplicationContext(), "Load Simulation", 
+							Toast.LENGTH_LONG).show(); 
+				} else if(_startMenuState == StartMenuState.HOW_TO_PLAY_SELECTED) {
+					Toast.makeText(this.getApplicationContext(), "How to Play", 
+							Toast.LENGTH_LONG).show(); 
+					_startMenuState = StartMenuState.CREDITS_SELECTED;
+				} else if(_startMenuState == StartMenuState.CREDITS_SELECTED) {
+					Toast.makeText(this.getApplicationContext(), "Credits", 
+							Toast.LENGTH_LONG).show(); 
+					_renderList.clearList();
+					_renderList.setScreen(_renderList.CREDITS_SCREEN);
+					
+				}
 			}
 		}
 		glSurf.KeyDown(keyCode,event);
@@ -108,10 +144,20 @@ public class MainActivity extends Activity {
         _renderList.addRenderLink(new RenderLink("loadgamebutton", "loadgamebutton", 1, 482.f, 216.f));
         _renderList.addRenderLink(new RenderLink("howtoplaygamebutton", "howtoplaygamebutton", 1, 482.f, 129.f));
         _renderList.addRenderLink(new RenderLink("creditsgamebutton", "creditsgamebutton", 1, 482.f, 42.f));
-        _renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 303.f));
+        
+		if(_startMenuState == StartMenuState.START_SIMULATION_SELECTED) {
+			_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 303.f));
+		} else if(_startMenuState == StartMenuState.LOAD_SIMULATION_SELECTED) {
+			_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 216.f));
+		} else if(_startMenuState == StartMenuState.HOW_TO_PLAY_SELECTED) {
+			_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 129.f)); 
+		} else if(_startMenuState == StartMenuState.CREDITS_SELECTED) {
+			_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 42.f));
+		}
 
 	}
 
+	//public void
 	
 
 }
