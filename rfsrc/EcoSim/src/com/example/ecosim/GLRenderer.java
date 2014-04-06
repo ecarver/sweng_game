@@ -51,11 +51,15 @@ public class GLRenderer implements Renderer {
 	int mProgram;
 	RenderList renderList;
 	
+	private EventQueue eventQueue;
+	
 	public GLRenderer(Context c)
 	{
 		mContext = c;
 		mLastTime = System.currentTimeMillis() + 100;
 		//sprite = new Sprite();
+		
+		eventQueue = new EventQueue();
 	}
 	
 	public void onPause()
@@ -491,14 +495,22 @@ public class GLRenderer implements Renderer {
 	
     private void StepSimulation() {
         engine.step();
+        while (!eventQueue.isEmpty()) {
+        	Event event = eventQueue.getEvent();
+        	if (event instanceof SimulationEvent) {
+        		if (!simulationEngine.simulateOneEvent((SimulationEvent)event)) {
+        			eventQueue.popEvent();
+        		}
+        	}
+        }
     }
 
     private void LoadSimulation() {
-        engine = startMenu.loadSimulation();
+        engine = startMenu.LoadSimulation();
     }
 
     private void SaveSimulation() {
-        startMenu.saveSimulation();
+        startMenu.SaveSimulation();
     }
 
     private void NewSimulation() {
