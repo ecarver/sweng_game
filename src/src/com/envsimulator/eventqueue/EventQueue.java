@@ -19,6 +19,7 @@ public class EventQueue {
     public void postEvent(Event event) {
         queue.add(event);
     }
+    public Boolean isEmpty() { return queue.peek() == null; }
 }
 
 // This class orders events such that the highest priority is 0 assuming priorities are unsigned
