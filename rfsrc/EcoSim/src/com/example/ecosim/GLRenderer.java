@@ -374,18 +374,136 @@ public class GLRenderer implements Renderer {
 		drawListBuffer.position(0);
 	}
 	
+	private Screen screen;
+    private StartOption startOption;
+    private int xTile;
+    private int yTile;
+    private final int xTileMax = 4;
+    private final int yTileMax = 4;
+    Boolean simMenuOpen;
+	
+    enum Screen {
+        START_MENU,
+        GAME_MENU,
+        SIMULATION
+    };
+
+    enum StartOption {
+        NEW_SIM,
+        LOAD_SIM,
+        CREDITS,
+        GUIDE
+    };
+	
 	public void keyEvent(int keyCode) {
-		Log.i("KeyCode", "index=" + keyCode);
+	    boolean handled = false;
 
-	    if(keyCode == 42)
-	    {
-
-			RenderLink demo2 = new RenderLink("bear5", "bear", 3, 2.0f, 2.f);
-			renderList.deleteRenderLink("bear2");
-			renderList.addRenderLink(demo2);
-			System.out.println("here\n");
-	    }
+        //Handle the input
+        switch(keyCode){
+        case OuyaController.BUTTON_O:
+            if (this.screen == Screen.SIMULATION) { // Back
+            	this.screen = Screen.START_MENU;
+            }
+            else if (this.screen == Screen.GAME_MENU) { // Back
+            	this.screen = Screen.SIMULATION;
+            }
+            handled = true;
+            break;
+        case OuyaController.BUTTON_U:
+            if (this.screen == Screen.SIMULATION) { // Game Menu
+            	this.screen = Screen.GAME_MENU;
+            }
+            else if (this.screen == Screen.GAME_MENU) { // Exit Menu
+            	this.screen = Screen.SIMULATION;
+            }
+            handled = true;
+            break;
+        case OuyaController.BUTTON_Y:
+            if (this.screen == Screen.SIMULATION) { // Step
+                StepSimulation();
+            }
+            handled = true;
+            break;
+        case OuyaController.BUTTON_A:
+            if (this.screen == Screen.START_MENU) { // Select
+                if (startOption == StartOption.LOAD_SIM) {
+                    LoadSimulation();
+                }
+                else if (startOption == StartOption.NEW_SIM) {
+                    NewSimulation();
+                }
+            }
+            else if (this.screen == Screen.SIMULATION) { // Select
+                simMenuOpen = !simMenuOpen;
+            }
+            else if (this.screen == Screen.GAME_MENU) { // Select
+            	this.screen = Screen.SIMULATION;
+            }
+            handled = true;
+            break;
+        case OuyaController.BUTTON_DPAD_UP:
+            if (this.screen == Screen.START_MENU) {
+                if (startOption == StartOption.NEW_SIM)
+                    startOption = StartOption.GUIDE;
+                else if (startOption == StartOption.LOAD_SIM)
+                    startOption = StartOption.NEW_SIM;
+                else if (startOption == StartOption.CREDITS)
+                	startOption = StartOption.LOAD_SIM;
+                else
+                	startOption = StartOption.CREDITS;
+            }
+            else if (this.screen == Screen.SIMULATION) {
+                if (yTile > 1) yTile--;
+            }
+            handled = true;
+            break;
+        case OuyaController.BUTTON_DPAD_DOWN:
+            if (this.screen == Screen.START_MENU) {
+                if (startOption == StartOption.NEW_SIM)
+                    startOption = StartOption.LOAD_SIM;
+                else if (startOption == StartOption.LOAD_SIM)
+                    startOption = StartOption.CREDITS;
+                else if (startOption == StartOption.CREDITS)
+                	startOption = StartOption.GUIDE;
+                else
+                	startOption = StartOption.NEW_SIM;
+            }
+            else if (this.screen == Screen.SIMULATION) {
+                if (yTile < yTileMax) yTile++;
+            }
+            handled = true;
+            break;
+        case OuyaController.BUTTON_DPAD_LEFT:
+            if (this.screen == Screen.SIMULATION) {
+                if (xTile > 1) xTile--;
+            }
+            handled = true;
+            break;
+        case OuyaController.BUTTON_DPAD_RIGHT:
+            if (this.screen == Screen.SIMULATION) {
+                if (xTile < xTileMax) xTile++;
+            }
+            handled = true;
+            break;
+        }
+        return handled || super.onKeyDown(keyCode, event);
 	}
+	
+    private void StepSimulation() {
+        engine.step();
+    }
+
+    private void LoadSimulation() {
+        engine = startMenu.loadSimulation();
+    }
+
+    private void SaveSimulation() {
+        startMenu.saveSimulation();
+    }
+
+    private void NewSimulation() {
+        engine = new SimulationEngine();
+    }
 	
 	class Sprite
 	{
