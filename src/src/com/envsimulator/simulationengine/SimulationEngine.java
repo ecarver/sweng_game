@@ -501,6 +501,16 @@ public class SimulationEngine {
         stats.recordLife(org.location.x(), org.location.y(), false, );
     }
 
+    public void addExistingAnimal(Animal animal) throws IndexOutOfBoundsException {
+        organisms.put(animal.id, animal);
+        grid.tiles[animal.location.x()][animal.location.y()].addAnimal(animal);
+    }
+
+    public void addExistingPlant(Plant plant) throws IndexOutOfBoundsException {
+        organisms.put(plant.id, plant);
+        grid.tiles[plant.location.x()][plant.location.y()].addPlant(plant);
+    }
+
     public static Boolean isAnimal(int organismId) {
         return (organismId > 0);
     }
