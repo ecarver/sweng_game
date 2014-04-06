@@ -13,7 +13,12 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 	
 	TextQueue text;
-	
+
+    private static final String HOW_TO_PLAY = "Press \"Start Simulation\" to begin a new simulation at a predetermined starting point.\n" +
+        "Press \"Load Simulation\" to resume the last simulation.\n" +
+        "Step the simulation forward by pressing \"Step.\"\n" +
+        "Move the cursor over a tile to show information on its occupants.\n";
+
 	// Our OpenGL Surfaceview
 	private GLSurfaceView glSurfaceView;
 	private GLSurf glSurf;
@@ -77,7 +82,7 @@ public class MainActivity extends Activity {
 		//20
 		//66 neter
 		if(_renderList.getScreen() == _renderList.START_MENU) {
-			if(keyCode == 19) {
+                    if(keyCode == 19) { // Up
 				if(_startMenuState == StartMenuState.START_SIMULATION_SELECTED) {
 					_renderList.deleteRenderLink("startmenuselect");
 					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 42.f));
@@ -95,7 +100,7 @@ public class MainActivity extends Activity {
 					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 129.f));
 					_startMenuState = StartMenuState.HOW_TO_PLAY_SELECTED;
 				}
-			} else 	if(keyCode == 20) {
+			} else 	if(keyCode == 20) { 
 				if(_startMenuState == StartMenuState.START_SIMULATION_SELECTED) {
 					_renderList.deleteRenderLink("startmenuselect");
 					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 216.f));
@@ -113,7 +118,7 @@ public class MainActivity extends Activity {
 					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 303.f));
 					_startMenuState = StartMenuState.START_SIMULATION_SELECTED;
 				}
-			} else 	if(keyCode == 66) {
+                    } else if(keyCode == 66) { //Enter
 				if(_startMenuState == StartMenuState.START_SIMULATION_SELECTED) {
 					Toast.makeText(this.getApplicationContext(), "Start Simulation", 
 							Toast.LENGTH_LONG).show(); 
@@ -121,9 +126,8 @@ public class MainActivity extends Activity {
 					Toast.makeText(this.getApplicationContext(), "Load Simulation", 
 							Toast.LENGTH_LONG).show(); 
 				} else if(_startMenuState == StartMenuState.HOW_TO_PLAY_SELECTED) {
-					Toast.makeText(this.getApplicationContext(), "How to Play", 
-							Toast.LENGTH_LONG).show(); 
-					_startMenuState = StartMenuState.CREDITS_SELECTED;
+                                    _textQueue.addText(findViewById(R.id.gamelayout), HOW_TO_PLAY,
+                                                       10, 10, 20, 10, 10, 10, 10);
 				} else if(_startMenuState == StartMenuState.CREDITS_SELECTED) {
 					Toast.makeText(this.getApplicationContext(), "Credits", 
 							Toast.LENGTH_LONG).show(); 
@@ -132,6 +136,9 @@ public class MainActivity extends Activity {
 					
 				}
 			}
+                    else if (keyCode == 67) { //Backspace
+                        _textQueue.removeText(HOW_TO_PLAY);
+                    }
 		}
 		glSurf.KeyDown(keyCode,event);
 		return true;
