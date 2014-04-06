@@ -83,7 +83,7 @@ class Statistics {
         int livePlants = 0;
         for (int i = 0; i < xGridSize; i++) {
             for (int j = 0; j < yGridSize; j++) {
-                livePlants = livePlants += plantsLivingInTile[i][j];
+                livePlants += plantsLivingInTile[i][j];
             }
         }
         return livePlants;
@@ -93,7 +93,7 @@ class Statistics {
         int deadPlants = 0;
         for (int i = 0; i < xGridSize; i++) {
             for (int j = 0; j < yGridSize; j++) {
-                deadPlants = deadPlants += plantsDiedInTile[i][j];
+                deadPlants += plantsDiedInTile[i][j];
             }
         }
         return livePlants;
