@@ -17,39 +17,42 @@ public class MainActivity extends Activity {
 	// Our OpenGL Surfaceview
 	private GLSurfaceView glSurfaceView;
 	private GLSurf glSurf;
+	private RenderList _renderList;
+	private TextQueue _textQueue;
+	private enum StartMenuState { START_SIMULATION_SELECTED, LOAD_SIMULATION_SELECTED, HOW_TO_PLAY_SELECTED, CREDITS_SELECTED };
+	private StartMenuState _startMenuState;
 	
 	@SuppressLint({ "InlinedApi", "NewApi" }) @Override
 	protected void onCreate(Bundle savedInstanceState) {
 				
-		// Turn off the window's title bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         
-        // Super
 		super.onCreate(savedInstanceState);
 		
-		// Fullscreen mode
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
 
-        
-        // We create our Surfaceview for our OpenGL here.
+		_startMenuState = StartMenuState.START_SIMULATION_SELECTED;
 		
-		glSurf = new GLSurf(this);
+		_renderList = new RenderList();
+		
+		initStartMenu();
+
+        //_renderList.clearList();
+		glSurf = new GLSurf(this, _renderList, _textQueue);
         glSurfaceView = glSurf;
         
-        // Set our view.	
 		setContentView(R.layout.activity_main);
 		
-		// Retrieve our Relative layout from our main layout we just set to our view.
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
         
-        // Attach our surfaceview to our relative layout from our main layout.
         RelativeLayout.LayoutParams glParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         layout.addView(glSurfaceView, glParams);
+        // 
         
-        text = new TextQueue();
-        text.addText(findViewById(R.id.gamelayout), "YOLO", 10, 10, 20, 
+        _textQueue = new TextQueue();
+        _textQueue.addText(findViewById(R.id.gamelayout), "YOLO", 10, 10, 20, 
 			10, 10, 10, 10);
         
 
@@ -59,7 +62,6 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		glSurfaceView.onPause();
-		//text.removeText("YOLO");
 	}
 
 	@Override
@@ -71,9 +73,43 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) 
 	{
-		
+		//19
+		//20
+		//66 neter
+		if(_renderList.getScreen() == _renderList.START_MENU) {
+			if(keyCode == 4) {
+				if(_startMenuState == StartMenuState.START_SIMULATION_SELECTED) {
+					_renderList.deleteRenderLink("startmenuselect");
+					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 42.f));
+					_startMenuState = StartMenuState.CREDITS_SELECTED;
+				} else if(_startMenuState == StartMenuState.LOAD_SIMULATION_SELECTED) {
+					_renderList.deleteRenderLink("startmenuselect");
+					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 303.f));
+					_startMenuState = StartMenuState.START_SIMULATION_SELECTED;
+				} else if(_startMenuState == StartMenuState.HOW_TO_PLAY_SELECTED) {
+					_renderList.deleteRenderLink("startmenuselect");
+					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 216.f));
+					_startMenuState = StartMenuState.LOAD_SIMULATION_SELECTED;
+				} else if(_startMenuState == StartMenuState.CREDITS_SELECTED) {
+					_renderList.deleteRenderLink("startmenuselect");
+					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 129.f));
+					_startMenuState = StartMenuState.HOW_TO_PLAY_SELECTED;
+				}
+			}
+		}
 		glSurf.KeyDown(keyCode,event);
 		return true;
+	}
+	
+	public void initStartMenu() {
+        _renderList.addRenderLink(new RenderLink("logo", "logo", 1, 520.f, 469.f));
+        _renderList.addRenderLink(new RenderLink("title", "title", 1, 457.f, 383.f));
+        _renderList.addRenderLink(new RenderLink("startgamebutton", "startgamebutton", 1, 482.f, 303.f));
+        _renderList.addRenderLink(new RenderLink("loadgamebutton", "loadgamebutton", 1, 482.f, 216.f));
+        _renderList.addRenderLink(new RenderLink("howtoplaygamebutton", "howtoplaygamebutton", 1, 482.f, 129.f));
+        _renderList.addRenderLink(new RenderLink("creditsgamebutton", "creditsgamebutton", 1, 482.f, 42.f));
+        _renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 303.f));
+
 	}
 
 	
