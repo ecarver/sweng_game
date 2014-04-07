@@ -116,7 +116,7 @@ class Animal extends Organism implements Comparable<Animal> {
     //     this(x, y);
     // }
     float injury_health; // This represents injury. The health value used upstream depends on
-                          // several factors
+                         // several factors
     float thirst;
     float hunger;
     float evolutionaryFitness;
@@ -380,7 +380,7 @@ public class SimulationEngine {
                 first.fight(second);
             }
             if (second.rng.nextFloat() >
-                     1-second.attributes.aggressiveness - first.size() + second.size()) {
+                1-second.attributes.aggressiveness - first.size() + second.size()) {
                 second.fight(first);
             }
             // Otherwise, peaceful meeting so do nothing
@@ -523,12 +523,12 @@ public class SimulationEngine {
             if (organism.increase_age()) {
                 // The animal died
                 if ( isAnimal(event.firstOrganism) ) {
-                	stats.recordDeath(organism.location.x(), organism.location.y(), true, organism.GetSpecies());
+                    stats.recordDeath(organism.location.x(), organism.location.y(), true, organism.GetSpecies());
                     grid.tiles[organism.location.x()][organism.location.y()]
                         .removeAnimal((Animal)organism);
                 }
                 else {
-                	stats.recordDeath(organism.location.x(), organism.location.y(), false, );
+                    stats.recordDeath(organism.location.x(), organism.location.y(), false, AnimalSpecies.BEAR);
                     grid.tiles[organism.location.x()][organism.location.y()]
                         .removePlant((Plant)organism);
                 }
