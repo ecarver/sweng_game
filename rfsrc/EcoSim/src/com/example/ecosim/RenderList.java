@@ -4,14 +4,22 @@ public class RenderList {
 	private RenderLink _head;
 	private int size;
 	private boolean change;
+	public final int START_MENU = 1;
+	public final int HOW_TO_PLAY_SCREEN = 2;
+	public final int CREDITS_SCREEN = 3;
+	public final int ECO_MAP = 4;
+	public final int STAT_SCREEN = 5;
+	private int _screen;
 
 	public RenderList() {
+		_screen = START_MENU;
 		size = 0;
 		_head = null;
 		change = false;
 	}
 
 	public RenderList(RenderLink head) {
+		_screen = START_MENU;
 		size = 1;
 		_head = head;
 		change = true;
@@ -76,7 +84,7 @@ public class RenderList {
 						change = true;
 						return;
 					} else if(temp.getNext() == null) {
-						temp.getPrev().setNext(temp.getNext());
+						temp.getPrev().setNext(null);
 						size--;
 						change = true;
 						return;
@@ -106,6 +114,11 @@ public class RenderList {
 		return _head;
 	}
 
+	public void setHead(RenderLink head) {
+		_head = head;
+		change = true;
+	}
+	
 	public int getSize() {
 		return size;
 	}
@@ -115,6 +128,15 @@ public class RenderList {
 	}
 	public void setChangeToFalse() {
 		change = false;
+	}
+	
+	public void setScreen(int screen) {
+		_screen = screen;
+	}
+
+	
+	public int getScreen() {
+		return _screen;
 	}
 }
 

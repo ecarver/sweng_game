@@ -12,14 +12,11 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PointF;
-import android.graphics.RectF;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
 import android.util.Log;
-import android.view.KeyEvent;
 
 public class GLRenderer implements Renderer {
 
@@ -34,8 +31,7 @@ public class GLRenderer implements Renderer {
 	public static float uvs[];
 	public FloatBuffer vertexBuffer;
 	public ShortBuffer drawListBuffer;
-	public FloatBuffer uvBuffer;
-	public Sprite sprite;
+	public FloatBuffer uvBuffer; 
 	// Our screenresolution
 	float	mScreenWidth = 1280;
 	float	mScreenHeight = 720;
@@ -49,14 +45,17 @@ public class GLRenderer implements Renderer {
 	Context mContext;
 	long mLastTime;
 	int mProgram;
-	RenderList renderList;
+	RenderList _renderList;
+	TextQueue _textQueue;
 	
 	private EventQueue eventQueue;
 	
-	public GLRenderer(Context c)
+	public GLRenderer(Context c, RenderList renderList, TextQueue textQueue)
 	{
 		mContext = c;
 		mLastTime = System.currentTimeMillis() + 100;
+		_renderList = renderList;
+		_textQueue = textQueue;
 		//sprite = new Sprite();
 		
 		eventQueue = new EventQueue();
@@ -82,13 +81,9 @@ public class GLRenderer implements Renderer {
     	// We should make sure we are valid and sane
     	if (mLastTime > now) return;
         
-    	// Get the amount of time the last frame took.
-    	long elapsed = now - mLastTime;
-		
-		// Update our example
-		//UpdateSprite();
-    	if(renderList.getChange()) {
-    		renderList.setChangeToFalse();
+    	
+    	if(_renderList.getChange()) {
+    		_renderList.setChangeToFalse();
     		SetupTriangle();
     		// Create the image information
     		SetupImage();    		
@@ -171,10 +166,6 @@ public class GLRenderer implements Renderer {
 
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-		RenderLink demo = new RenderLink("bear1", "bear", 2, 60.0f, 260.f);
-		RenderLink demo2 = new RenderLink("bear2", "bear", 3, 1150.0f, 690.f);
-		renderList = new RenderList(demo);
-		renderList.addRenderLink(demo2);
 		
 		// Setup our scaling system
 		SetupScaling();
@@ -212,24 +203,13 @@ public class GLRenderer implements Renderer {
 		ssx = swp / 1280.0f;
 		ssy = shp / 720.0f;
 		
+		/**
 		// Get our uniform scaler
 		if(ssx > ssy)
     		ssu = ssy;
     	else
     		ssu = ssx;
-	}
-	
-	public void UpdateSprite()
-	{
-		// Get new transformed vertices
-		//vertices = sprite.getTransformedVertices();
-		
-		// The vertex buffer.
-		ByteBuffer bb = ByteBuffer.allocateDirect(vertices.length * 4);
-		bb.order(ByteOrder.nativeOrder());
-		vertexBuffer = bb.asFloatBuffer();
-		vertexBuffer.put(vertices);
-		vertexBuffer.position(0);
+    	*/
 	}
 	
 	
@@ -240,32 +220,127 @@ public class GLRenderer implements Renderer {
 		// Not the actual knowledge.
 		
 		// 30 imageobjects times 4 vertices times (u and v)
-		uvs = new float[renderList.getSize()*4*2];
+		uvs = new float[_renderList.getSize()*4*2];
 		
-		RenderLink loop = renderList.getHead();
+		RenderLink loop = _renderList.getHead();
 		
 		// We will make 30 randomly textures objects
-		for(int i=0; i<renderList.getSize(); i++)
+		for(int i=0; i<_renderList.getSize(); i++)
 		{
-			int random_u_offset = 0;
-			int random_v_offset = 1;
-			float scale = 0.5f;
+			float x_start_pos = 0;
+			float x_end_pos = 0.46040515653775f;
+			float y_start_pos = 0;
+			float y_end_pos = 0.28132387706856f;
 			
-			if(loop.getFilename().equals("bear")) {
-				random_u_offset = 1;
-				random_v_offset = 1;
-				scale = 0.5f;
+			if(loop.getFilename().equals("logo")) {
+				x_start_pos = 0;
+				x_end_pos = 0.46040515653775f;
+				y_start_pos = 0;
+				y_end_pos = 0.28132387706856f;
+			}
+
+			else if(loop.getFilename().equals("title")) {
+				x_start_pos = 0;
+				x_end_pos = 0.68692449355433f;
+				y_start_pos = 0.28723404255319f;
+				y_end_pos = 0.38770685579196f;
 			}
 			
-			// Adding the UV's using the offsets
-			uvs[(i*8) + 0] = random_u_offset * scale;
-			uvs[(i*8) + 1] = random_v_offset * scale;
-			uvs[(i*8) + 2] = random_u_offset * scale;
-			uvs[(i*8) + 3] = (random_v_offset+1) * scale;
-			uvs[(i*8) + 4] = (random_u_offset+1) * scale;
-			uvs[(i*8) + 5] = (random_v_offset+1) * scale;
-			uvs[(i*8) + 6] = (random_u_offset+1) * scale;
-			uvs[(i*8) + 7] = random_v_offset * scale;
+			else if(loop.getFilename().equals("startgamebutton")) {
+				x_start_pos = 0;
+				x_end_pos = 0.60036832412523f;
+				y_start_pos = 0.39125295508274f;
+				y_end_pos = 0.47399527186761f;
+			}
+			
+			else if(loop.getFilename().equals("loadgamebutton")) {
+				x_start_pos = 0;
+				x_end_pos = 0.60036832412523f;
+				y_start_pos = 0.5709219858156f;
+				y_end_pos = 0.65602836879433f;
+			}
+			
+			else if(loop.getFilename().equals("howtoplaygamebutton")) {
+				x_start_pos = 0;
+				x_end_pos = 0.60036832412523f;
+				y_start_pos = 0.67139479905437f;
+				y_end_pos = 0.7565011820331f;
+			}
+			
+			else if(loop.getFilename().equals("creditsgamebutton")) {
+				x_start_pos = 0;
+				x_end_pos = 0.60036832412523f;
+				y_start_pos = 0.76004728132388f;
+				y_end_pos = 0.8451536643026f;
+			}
+			
+			else if(loop.getFilename().equals("startmenuselect")) {
+				x_start_pos = 0;
+				x_end_pos = 0.60036832412523f;
+				y_start_pos = 0.47872340425532f;
+				y_end_pos = 0.5661938534279f;
+			}
+			
+			else if(loop.getFilename().equals("sidemenu")) {
+				x_start_pos = 0;
+				x_end_pos = 0.98488664987406f;
+				y_start_pos = 0.00199866755496f;
+				y_end_pos = 0.48434377081945f;
+			}
+			
+			else if(loop.getFilename().equals("tileselect")) {
+				x_start_pos = 0;
+				x_end_pos = 0.35012594458438f;
+				y_start_pos = 0.50299800133245f;
+				y_end_pos = 0.59093937375083f;
+			}
+			
+			else if(loop.getFilename().equals("watertile")) {
+				x_start_pos = 0;
+				x_end_pos = 0.35012594458438f;
+				y_start_pos = 0.61034043970686f;
+				y_end_pos = 0.69828181212525f;
+			}
+			
+			else if(loop.getFilename().equals("grasstile")) {
+				x_start_pos = 0;
+				x_end_pos = 0.35012594458438f;
+				y_start_pos = 0.71730979347102f;
+				y_end_pos = 0.80525116588941f;
+			}
+			
+			else if(loop.getFilename().equals("rabbit")) {
+				x_start_pos = 0;
+				x_end_pos = 0.18891687657431f;
+				y_start_pos = 0.82427848101266f;
+				y_end_pos = 0.86958161225849f;
+			}
+
+			else if(loop.getFilename().equals("bear")) {
+				x_start_pos = 0;
+				x_end_pos = 0.18891687657431f;
+				y_start_pos = 0.88860959360426f;
+				y_end_pos =  0.9339127248501f;
+			}
+			
+			else if(loop.getFilename().equals("flower")) {
+				x_start_pos = 0;
+				x_end_pos = 0.18891687657431f;
+				y_start_pos = 0.95294003997335f;
+				y_end_pos = 0.99824317121919f;
+			}
+			
+			//397 1501
+			uvs[(i*8) + 0] = x_start_pos;
+			uvs[(i*8) + 1] = y_start_pos;
+			uvs[(i*8) + 2] = x_start_pos;
+			uvs[(i*8) + 3] = y_end_pos;
+			uvs[(i*8) + 4] = x_end_pos;
+			uvs[(i*8) + 5] = y_end_pos;
+			uvs[(i*8) + 6] = x_end_pos;
+			uvs[(i*8) + 7] = y_start_pos;
+			
+			
 			
 			loop = loop.getNext();
 		}
@@ -281,8 +356,14 @@ public class GLRenderer implements Renderer {
 		int[] texturenames = new int[1];
 		GLES20.glGenTextures(1, texturenames, 0);
 		
-		// Retrieve our image from resources.
-		int id = mContext.getResources().getIdentifier("drawable/textureatlas", null, mContext.getPackageName());
+		// Retrieve our image from resources
+		int id = 1;
+		if(_renderList.getScreen() == _renderList.START_MENU || _renderList.getScreen() == _renderList.CREDITS_SCREEN ||
+				_renderList.getScreen() == _renderList.HOW_TO_PLAY_SCREEN) {
+			id = mContext.getResources().getIdentifier("drawable/ecosimtextureatlas", null, mContext.getPackageName());
+		} else if(_renderList.getScreen() == _renderList.ECO_MAP) {
+			id = mContext.getResources().getIdentifier("drawable/simulationatlas", null, mContext.getPackageName());
+		}
 		
 		// Temporary create a bitmap
 		Bitmap bmp = BitmapFactory.decodeResource(mContext.getResources(), id);
@@ -309,45 +390,140 @@ public class GLRenderer implements Renderer {
 		Random rnd = new Random();
 		
 		// Our collection of vertices
-		vertices = new float[renderList.getSize()*4*3];
+		vertices = new float[_renderList.getSize()*4*3];
 		
-		RenderLink loop = renderList.getHead();
+		RenderLink loop = _renderList.getHead();
 		
 		// Create the vertex data
-		for(int i=0;i<renderList.getSize();i++)
+		for(int i=0;i<_renderList.getSize();i++)
 		{
+			Log.i("Loop", loop.getFilename());
+
 			int offset_x = 0;
 			int offset_y = 0;
-			float scale = 30.0f;
+			float scale_x = 543.0f;
+			float scale_y = 846.0f;
 			//System.out.println(loop.getFilename());
 			
-			if(loop.getFilename().equals("bear")) {
+			if(loop.getFilename().equals("logo")) {
 				offset_x = (int)loop.getPositionX();
 				offset_y = (int)loop.getPositionY();
-				scale = 30.0f;
-			}			
+				scale_x = 250.0f;
+				scale_y = 237.0f;
+			}
 			
+			else if(loop.getFilename().equals("title")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 375.0f;
+				scale_y = 81.0f;
+			}
+			
+			else if(loop.getFilename().equals("startgamebutton")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 326.0f;
+				scale_y = 68.0f;
+			}
+			
+			else if(loop.getFilename().equals("loadgamebutton")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 326.0f;
+				scale_y = 68.0f;
+			}
+			
+			else if(loop.getFilename().equals("howtoplaygamebutton")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 326.0f;
+				scale_y = 68.0f;
+			}
+			
+			else if(loop.getFilename().equals("creditsgamebutton")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 326.0f;
+				scale_y = 68.0f;
+			}
+			
+			else if(loop.getFilename().equals("startmenuselect")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 326.0f;
+				scale_y = 68.0f;
+			}
+			
+			else if(loop.getFilename().equals("sidemenu")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 393.0f;
+				scale_y = 722.0f;
+			}
+			
+			else if(loop.getFilename().equals("tileselect")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 139.0f;
+				scale_y = 128.0f;
+			}
+
+			else if(loop.getFilename().equals("watertile")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 139.0f;
+				scale_y = 128.0f;
+			}
+			
+			else if(loop.getFilename().equals("grasstile")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 139.0f;
+				scale_y = 128.0f;
+			}
+			
+			else if(loop.getFilename().equals("rabbit")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 75.0f;
+				scale_y = 64.0f;
+			}
+			
+			else if(loop.getFilename().equals("bear")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 75.0f;
+				scale_y = 64.0f;
+			}
+			
+			else if(loop.getFilename().equals("flower")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 75.0f;
+				scale_y = 64.0f;
+			}
+
 			// Create the 2D parts of our 3D vertices, others are default 0.0f
 			vertices[(i*12) + 0] = offset_x;
-			vertices[(i*12) + 1] = offset_y + (scale*ssu);
+			vertices[(i*12) + 1] = offset_y + (scale_y);
 			vertices[(i*12) + 2] = 0f;
 			vertices[(i*12) + 3] = offset_x;
 			vertices[(i*12) + 4] = offset_y;
 			vertices[(i*12) + 5] = 0f;
-			vertices[(i*12) + 6] = offset_x + (scale*ssu);
+			vertices[(i*12) + 6] = offset_x + (scale_x);
 			vertices[(i*12) + 7] = offset_y;
 			vertices[(i*12) + 8] = 0f;
-			vertices[(i*12) + 9] = offset_x + (scale*ssu);
-			vertices[(i*12) + 10] = offset_y + (scale*ssu);
+			vertices[(i*12) + 9] = offset_x + (scale_x);
+			vertices[(i*12) + 10] = offset_y + (scale_y);
 			vertices[(i*12) + 11] = 0f;
-			
+			//
 			loop = loop.getNext();
 		}
 		
 		// The indices for all textured quads
-		indices = new short[renderList.getSize()*6]; 
+		indices = new short[_renderList.getSize()*6]; 
 		int last = 0;
-		for(int i=0;i<renderList.getSize();i++)
+		for(int i=0;i<_renderList.getSize();i++)
 		{
 			// We need to set the new indices for the new quad
 			indices[(i*6) + 0] = (short) (last + 0);
