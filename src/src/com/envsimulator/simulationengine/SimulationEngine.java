@@ -300,7 +300,7 @@ public class SimulationEngine {
         this.animalIdCount = 1;
         this.plantIdCount = -1;
         this.rng = new Random();
-        this.stats = new Statistics();
+        this.stats = new Statistics(gridSizeX, gridSizeY);
     }
 
     // public void step() {
@@ -448,7 +448,7 @@ public class SimulationEngine {
         case Event.MOVE:
             Animal mover = (Animal)organisms.get(event.firstOrganism);
             if (!this.simulateMovement(mover, event.x, event.y)) {
-            	stats.swithTile(mover.location.x()-event.x, mover.location.y()-event.y, event.x, event.y, mover.GetSpecies());
+            	stats.switchTile(mover.location.x()-event.x, mover.location.y()-event.y, event.x, event.y, mover.GetSpecies());
                 mover.completeMovement();
                 return 0;
             }
@@ -457,7 +457,7 @@ public class SimulationEngine {
         case Event.DEFERRED_MOVE:
             Animal deferred_mover = (Animal)organisms.get(event.firstOrganism);
             if (!this.simulateMovement(deferred_mover, event.x, event.y)) {
-            	stats.swithTile(mover.location.x()-event.x, mover.location.y()-event.y, event.x, event.y, mover.GetSpecies());
+            	stats.switchTile(deferred_mover.location.x()-event.x, deferred_mover.location.y()-event.y, event.x, event.y, deferred_mover.GetSpecies());
                 deferred_mover.completeMovement();
             }
             // If the animal still can't move, tough shit. Try again next step.
@@ -467,12 +467,12 @@ public class SimulationEngine {
             if (organism.increase_age()) {
                 // The animal died
                 if ( isAnimal(event.firstOrganism) ) {
-                	stats.recordDeath(organism.location.x(), organism.location.y(), true, organism.GetSpecies());
+                	stats.recordDeath(organism.location.x(), organism.location.y(), true, ((Animal)organism).GetSpecies());
                     grid.tiles[organism.location.x()][organism.location.y()]
                         .removeAnimal((Animal)organism);
                 }
                 else {
-                	stats.recordDeath(organism.location.x(), organism.location.y(), false, );
+                	stats.recordDeath(organism.location.x(), organism.location.y(), false, (AnimalSpecies)null);
                     grid.tiles[organism.location.x()][organism.location.y()]
                         .removePlant((Plant)organism);
                 }
@@ -490,7 +490,7 @@ public class SimulationEngine {
                                                   this.rng.nextInt(grid.ySize)+1, species,
                                                   this.rng.nextFloat(), true));
         Organism org = organisms.get(animalIdCount-1);
-        stats.recordLife(org.location.x(), org.location.y(), true, org.GetSpecies());
+        stats.recordLife(org.location.x(), org.location.y(), true, ((Animal)org).GetSpecies());
     }
     public void addPlant() {
         organisms.put(plantIdCount--, new Plant(this.rng.nextInt(grid.xSize)+1,
@@ -498,7 +498,7 @@ public class SimulationEngine {
                                                 this.rng.nextFloat()*2+0.5f,
                                                 this.rng.nextFloat()/2));
         Organism org = organisms.get(plantIdCount+1);
-        stats.recordLife(org.location.x(), org.location.y(), false, );
+        stats.recordLife(org.location.x(), org.location.y(), false, (AnimalSpecies)null);
     }
 
     public void addExistingAnimal(Animal animal) throws IndexOutOfBoundsException {

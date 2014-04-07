@@ -1,41 +1,33 @@
 package com.envsimulator.simulationengine;
 
 class Statistics {
-    public Statistics (int xGridSize, int yGridSize, int waterTiles) {
+    public Statistics (int xGridSize, int yGridSize) {
         this.xGridSize = xGridSize;
         this.yGridSize = yGridSize;
-        
-        this.numTiles = this.xGridSize*this.yGridSize;
-        this.waterTiles = waterTiles;
-        this.landTiles = numTiles - waterTiles;
     }
     
     private int xGridSize;
     private int yGridSize;
     
-    private int numTiles;
-    private int waterTiles;
-    private int landTiles;
+    private int[][] bearsDiedInTile = new int[xGridSize][yGridSize];
+    private int[][] rabbitsDiedInTile = new int[xGridSize][yGridSize];
+    private int[][] plantsDiedInTile = new int[xGridSize][yGridSize];
     
-    private int bearsDiedInTile[xGridSize][yGridSize];
-    private int rabbitsDiedInTile[xGridSize][yGridSize];
-    private int plantsDiedInTile[xGridSize][yGridSize];
-    
-    private int bearsLivingInTile[xGridSize][yGridSize];
-    private int rabbitsLivingInTile[xGridSize][yGridSize];
-    private int plantsLivingInTile[xGridSize][yGridSize];
+    private int[][] bearsLivingInTile = new int[xGridSize][yGridSize];
+    private int[][] rabbitsLivingInTile = new int[xGridSize][yGridSize];
+    private int[][] plantsLivingInTile = new int[xGridSize][yGridSize];
     
     public void recordLife (int xTile, int yTile, boolean isAnimal, AnimalSpecies species) {
         if (isAnimal) {
             switch (species) {
-                case AnimalSpecies.BEAR:
+                case BEAR:
                     bearsLivingInTile[xTile][yTile]++;
                     break;
-                case AnimalSpecies.RABBIT:
+                case RABBIT:
                     rabbitsLivingInTile[xTile][yTile]++;
                     break;
                 default:
-                    break
+                    break;
             }
         }
         else
@@ -45,14 +37,14 @@ class Statistics {
     public void recordDeath (int xTile, int yTile, boolean isAnimal, AnimalSpecies species) {
         if (isAnimal) {
             switch (species) {
-                case AnimalSpecies.BEAR:
+                case BEAR:
                     bearsLivingInTile[xTile][yTile]--;
                     break;
-                case AnimalSpecies.RABBIT:
+                case RABBIT:
                     rabbitsLivingInTile[xTile][yTile]--;
                     break;
                 default:
-                    break
+                    break;
             }
         }
         else
@@ -96,7 +88,7 @@ class Statistics {
                 deadPlants += plantsDiedInTile[i][j];
             }
         }
-        return livePlants;
+        return deadPlants;
     }
     
     public int liveAnimals() {
@@ -147,23 +139,18 @@ class Statistics {
         return deadRabbits;
     }
     
-    public void switchTile(int x, int y, int xMovement, int yMovement, boolean isAnimal, AnimalSpecies species) {
-        if (isAnimal) {
-            switch (species) {
-                case AnimalSpecies.BEAR:
-                    bearsLivingInTile[x][y]--;
-                    bearsLivingInTile[x+xMovement][y+yMovement]++;
-                    break;
-                case AnimalSpecies.RABBIT:
-                    rabbitsLivingInTile[x][y]--;
-                    rabbitsLivingInTile[x+xMovement][y+yMovement]++;
-                    break;
-                default:
-                    break
-            }
+    public void switchTile(int x, int y, int xMovement, int yMovement, AnimalSpecies species) {
+        switch (species) {
+            case BEAR:
+                bearsLivingInTile[x][y]--;
+                bearsLivingInTile[x+xMovement][y+yMovement]++;
+                break;
+            case RABBIT:
+                rabbitsLivingInTile[x][y]--;
+                rabbitsLivingInTile[x+xMovement][y+yMovement]++;
+                break;
+            default:
+                break;
         }
-        else
-            plantsLivingInTile[x][y]--;
-            plantsLivingInTile[x+xMovement][y+yMovement]++;
-    }
+     }
 }
