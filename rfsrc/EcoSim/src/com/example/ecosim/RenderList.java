@@ -114,6 +114,11 @@ public class RenderList {
 		return _head;
 	}
 
+	public void setHead(RenderLink head) {
+		_head = head;
+		change = true;
+	}
+	
 	public int getSize() {
 		return size;
 	}
@@ -128,6 +133,7 @@ public class RenderList {
 	public void setScreen(int screen) {
 		_screen = screen;
 	}
+
 	
 	public int getScreen() {
 		return _screen;

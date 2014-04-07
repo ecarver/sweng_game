@@ -13,12 +13,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 	
 	TextQueue text;
-
-    private static final String HOW_TO_PLAY = "Press \"Start Simulation\" to begin a new simulation at a predetermined starting point.\n" +
-        "Press \"Load Simulation\" to resume the last simulation.\n" +
-        "Step the simulation forward by pressing \"Step.\"\n" +
-        "Move the cursor over a tile to show information on its occupants.\n";
-
+	
 	// Our OpenGL Surfaceview
 	private GLSurfaceView glSurfaceView;
 	private GLSurf glSurf;
@@ -26,6 +21,11 @@ public class MainActivity extends Activity {
 	private TextQueue _textQueue;
 	private enum StartMenuState { START_SIMULATION_SELECTED, LOAD_SIMULATION_SELECTED, HOW_TO_PLAY_SELECTED, CREDITS_SELECTED };
 	private StartMenuState _startMenuState;
+	private final String credits = "     CREDITS\n   Eric Carver\nCarlo Perottino\n  Clay Wagner\n  Doug Weber";
+    private static final String HOW_TO_PLAY = "Press \"Start Simulation\" to begin a new simulation at a predetermined starting point.\n" +
+            "Press \"Load Simulation\" to resume the last simulation.\n" +
+            "Step the simulation forward by pressing \"Step.\"\n" +
+            "Move the cursor over a tile to show information on its occupants.\n";
 	
 	@SuppressLint({ "InlinedApi", "NewApi" }) @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +41,6 @@ public class MainActivity extends Activity {
 		_startMenuState = StartMenuState.START_SIMULATION_SELECTED;
 		
 		_renderList = new RenderList();
-		
-		initStartMenu();
 
         //_renderList.clearList();
 		glSurf = new GLSurf(this, _renderList, _textQueue);
@@ -56,9 +54,11 @@ public class MainActivity extends Activity {
         layout.addView(glSurfaceView, glParams);
         // 
         
-        _textQueue = new TextQueue();
-        _textQueue.addText(findViewById(R.id.gamelayout), "ALPHA", 10, 10, 20, 
+        _textQueue = new TextQueue(findViewById(R.id.gamelayout));
+        _textQueue.addText("ALPHA", 10, 10, 20, 
 			10, 10, 10, 10);
+        //
+		initStartMenu();
         
 
 	}
@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
 		//20
 		//66 neter
 		if(_renderList.getScreen() == _renderList.START_MENU) {
-                    if(keyCode == 19) { // Up
+			if(keyCode == 19) {
 				if(_startMenuState == StartMenuState.START_SIMULATION_SELECTED) {
 					_renderList.deleteRenderLink("startmenuselect");
 					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 42.f));
@@ -100,7 +100,7 @@ public class MainActivity extends Activity {
 					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 129.f));
 					_startMenuState = StartMenuState.HOW_TO_PLAY_SELECTED;
 				}
-			} else 	if(keyCode == 20) { 
+			} else 	if(keyCode == 20) {
 				if(_startMenuState == StartMenuState.START_SIMULATION_SELECTED) {
 					_renderList.deleteRenderLink("startmenuselect");
 					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 216.f));
@@ -118,7 +118,7 @@ public class MainActivity extends Activity {
 					_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 303.f));
 					_startMenuState = StartMenuState.START_SIMULATION_SELECTED;
 				}
-                    } else if(keyCode == 66) { //Enter
+			} else if(keyCode == 66) {
 				if(_startMenuState == StartMenuState.START_SIMULATION_SELECTED) {
 					Toast.makeText(this.getApplicationContext(), "Start Simulation", 
 							Toast.LENGTH_LONG).show(); 
@@ -126,25 +126,43 @@ public class MainActivity extends Activity {
 					Toast.makeText(this.getApplicationContext(), "Load Simulation", 
 							Toast.LENGTH_LONG).show(); 
 				} else if(_startMenuState == StartMenuState.HOW_TO_PLAY_SELECTED) {
-                                    _textQueue.addText(findViewById(R.id.gamelayout), HOW_TO_PLAY,
-                                                       10, 10, 20, 10, 10, 10, 10);
-				} else if(_startMenuState == StartMenuState.CREDITS_SELECTED) {
-					Toast.makeText(this.getApplicationContext(), "Credits", 
+					Toast.makeText(this.getApplicationContext(), "How to Play", 
 							Toast.LENGTH_LONG).show(); 
-					_renderList.clearList();
+					_textQueue.removeText("Backspace: Return to Start Menu");
+					_renderList.setScreen(_renderList.HOW_TO_PLAY_SCREEN);
+					initHowToPlay();
+					
+				} else if(_startMenuState == StartMenuState.CREDITS_SELECTED) {
+					//Toast.makeText(this.getApplicationContext(), "Credits", 
+					//		Toast.LENGTH_LONG).show(); 
+					//_renderList.clearList();
+					_textQueue.removeText("Up Arrow: Move Up | Down Arrow: Move Down | Enter Key: Select");
 					_renderList.setScreen(_renderList.CREDITS_SCREEN);
+					initCredits();
 					
 				}
 			}
-                    else if (keyCode == 67) { //Backspace
-                        _textQueue.removeText(HOW_TO_PLAY);
-                    }
+		} else if(_renderList.getScreen() == _renderList.CREDITS_SCREEN) {
+			if(keyCode == 67) {
+				_textQueue.removeText(credits);
+				_textQueue.removeText("Backspace: Return to Start Menu");
+				_renderList.setScreen(_renderList.START_MENU);
+				initStartMenu();
+			}
+		} else if(_renderList.getScreen() == _renderList.HOW_TO_PLAY_SCREEN); {
+			if(keyCode == 67) {
+				_textQueue.removeText(HOW_TO_PLAY);
+				_textQueue.removeText("Backspace: Return to Start Menu");
+				_renderList.setScreen(_renderList.START_MENU);
+				initStartMenu();
+			}
 		}
 		glSurf.KeyDown(keyCode,event);
 		return true;
 	}
 	
 	public void initStartMenu() {
+		_renderList.clearList();
         _renderList.addRenderLink(new RenderLink("logo", "logo", 1, 520.f, 469.f));
         _renderList.addRenderLink(new RenderLink("title", "title", 1, 457.f, 383.f));
         _renderList.addRenderLink(new RenderLink("startgamebutton", "startgamebutton", 1, 482.f, 303.f));
@@ -161,10 +179,32 @@ public class MainActivity extends Activity {
 		} else if(_startMenuState == StartMenuState.CREDITS_SELECTED) {
 			_renderList.addRenderLink(new RenderLink("startmenuselect", "startmenuselect", 2, 482.f, 42.f));
 		}
+		
+		_textQueue.addText("Up Arrow: Move Up | Down Arrow: Move Down | Enter Key: Select", 1, 670, 12, 
+				10, 10, 10, 10);
 
 	}
 
-	//public void
+	public void initCredits() {
+		_renderList.clearList();
+		_textQueue.removeText("Up Arrow: Move Up | Down Arrow: Move Down | Enter Key: Select");
+		_textQueue.addText("Backspace: Return to Start Menu", 1, 670, 12, 
+				10, 10, 10, 10);
+		_renderList.addRenderLink(new RenderLink("logo", "logo", 1, 520.f, 469.f));
+        _renderList.addRenderLink(new RenderLink("title", "title", 1, 457.f, 383.f));
+		_textQueue.addText(credits, 510, 350, 20, 
+			10, 10, 10, 10);
+	}
+	
+	public void initHowToPlay() {
+		_renderList.clearList();
+		_renderList.addRenderLink(new RenderLink("logo", "logo", 1, 520.f, 469.f));
+        _renderList.addRenderLink(new RenderLink("title", "title", 1, 457.f, 383.f));
+        _textQueue.addText(HOW_TO_PLAY, 0, 350, 15, 
+    			10, 10, 10, 10);
+		_textQueue.addText("Backspace: Return to Start Menu", 1, 670, 12, 
+				10, 10, 10, 10);
+	}
 	
 
 }

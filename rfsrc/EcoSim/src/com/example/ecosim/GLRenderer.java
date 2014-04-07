@@ -77,6 +77,7 @@ public class GLRenderer implements Renderer {
     	// We should make sure we are valid and sane
     	if (mLastTime > now) return;
         
+    	
     	if(_renderList.getChange()) {
     		_renderList.setChangeToFalse();
     		SetupTriangle();
@@ -234,6 +235,7 @@ public class GLRenderer implements Renderer {
 			uvs[(i*8) + 5] = (random_v_offset+1);
 			uvs[(i*8) + 6] = (random_u_offset+1);
 			uvs[(i*8) + 7] = random_v_offset;
+
 			
 			if(loop.getFilename().equals("logo")) {
 				float x_start_pos = 0;
@@ -342,6 +344,8 @@ public class GLRenderer implements Renderer {
 			
 			
 			
+			
+			
 			loop = loop.getNext();
 		}
 		
@@ -358,7 +362,8 @@ public class GLRenderer implements Renderer {
 		
 		// Retrieve our image from resources
 		int id = 1;
-		if(_renderList.getScreen() == _renderList.START_MENU) {
+		if(_renderList.getScreen() == _renderList.START_MENU || _renderList.getScreen() == _renderList.CREDITS_SCREEN ||
+				_renderList.getScreen() == _renderList.HOW_TO_PLAY_SCREEN) {
 			id = mContext.getResources().getIdentifier("drawable/ecosimtextureatlas", null, mContext.getPackageName());
 		}
 		

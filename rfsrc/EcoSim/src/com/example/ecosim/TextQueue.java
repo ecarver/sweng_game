@@ -1,8 +1,10 @@
 package com.example.ecosim;
 
 import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.app.ActionBar.LayoutParams;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -12,14 +14,15 @@ import android.widget.TextView;
 public class TextQueue {
 	View _view;
 	private ArrayList<String> _textQueue;
-	public TextQueue() {
+	public TextQueue(View view) {
+		_view = view;
 		_textQueue = new ArrayList<String>();
 	}
 	
-	@SuppressLint("InlinedApi") public void addText(View view, String text, int positionX, int positionY, int textSize, 
+	@SuppressLint("InlinedApi") public void addText(String text, int positionX, int positionY, int textSize, 
 			int paddingOne, int paddingTwo, int paddingThree, int paddingFour) {
 		
-		_view = view;
+		//_view = view;
 		
 		_textQueue.add(text);
 		
@@ -27,7 +30,7 @@ public class TextQueue {
 
 		
 		TextView temp = new TextView(_view.getContext());
-		
+		temp.setTextColor(Color.rgb(255,255,255));
 	    RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams
 	            ((int)LayoutParams.WRAP_CONTENT,(int)LayoutParams.WRAP_CONTENT);
 	    params.leftMargin=positionX;
