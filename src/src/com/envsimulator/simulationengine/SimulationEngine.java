@@ -10,19 +10,25 @@ import com.envsimulator.eventqueue.Event;
 import com.envsimulator.eventqueue.SimulationEvent;
 
 abstract class Organism {
-    public Organism(int x, int y) {
+    public Organism(int x, int y, String action) {
         this.location = new Location(x, y);
+        this.lastAction = action;
     }
     abstract Boolean increase_age();
     Location location;
     protected String species;
     @Override public String toString() { return species; }
     protected int id;
+    protected String lastAction;
+
+    public String getLastAction() {
+        return lastAction;
+    }
 }
 
 class Plant extends Organism {
     public Plant(int x, int y, float maxFood, float growthRate, float food) {
-        super(x, y);
+        super(x, y, "Grew a little");
         this.maxFood = maxFood;
         this.growthRate = growthRate;
         this.food = food;
@@ -93,7 +99,7 @@ enum AnimalSpecies {
 
 class Animal extends Organism implements Comparable<Animal> {
     public Animal(int x, int y, AnimalSpecies attributes, float evolutionaryFitness, Boolean isMale) {
-        super(x, y);
+        super(x, y, "Did nothing");
         this.evolutionaryFitness = evolutionaryFitness;
         this.isMale = isMale;
         this.injury_health = 1.0f;
@@ -110,7 +116,7 @@ class Animal extends Organism implements Comparable<Animal> {
     //     this(x, y);
     // }
     float injury_health; // This represents injury. The health value used upstream depends on
-                          // several factors
+                         // several factors
     float thirst;
     float hunger;
     float evolutionaryFitness;
@@ -125,6 +131,10 @@ class Animal extends Organism implements Comparable<Animal> {
     Random rng;
 
     void fight(Animal other) {
+        this.lastAction = "Started a fight";
+        if (other.lastAction != "Started a fight") {
+            other.lastAction = "Defended itself";
+        }
         // This animal is the aggressor. The aggressor gets a slight bonus in the fight
         float damageToOther = this.health()*(this.size()-other.size())*
             (this.evolutionaryFitness-other.evolutionaryFitness) + 0.05f;
@@ -199,7 +209,7 @@ class Animal extends Organism implements Comparable<Animal> {
     	return evolutionaryFitness;
     }
 
-    public float Getincrease_age()
+    public float GetAge()
     {
     	return age;
     }
@@ -303,9 +313,43 @@ public class SimulationEngine {
         this.stats = new Statistics(gridSizeX, gridSizeY);
     }
 
-    // public void step() {
-        
-    // }
+    // Generates a random grid. Must be updated if more animal, plant, or tile types are added
+    public void genRandomGrid() {
+        for (int i = 1; i < grid.xSize; i++) {
+            for (int j = 1; j < grid.ySize; j++) {
+                // Generate a random tile environment type
+                if (rng.nextInt(2) == 0) {
+                    grid.tiles[i][j] = new Tile(TileEnvironmentType.DESERT);
+                }
+                else {
+                    grid.tiles[i][j] = new Tile(TileEnvironmentType.FOREST);
+                }
+                // Add 0-2 random animals
+                for (int k = rng.nextInt(Tile.ANIMAL_CAPACITY+1); k < Tile.ANIMAL_CAPACITY; k++) {
+                    if (rng.nextInt(2) == 0) {
+                        this.addRandomAnimal(AnimalSpecies.BEAR, i, j);
+                    }
+                    else {
+                        this.addRandomAnimal(AnimalSpecies.RABBIT, i, j);
+                    }
+                }
+                // Add 0-2 random plants
+                for (int k = rng.nextInt(Tile.PLANT_CAPACITY+1); k < Tile.PLANT_CAPACITY; k++) {
+                    this.addRandomPlant(i, j);
+                }
+            }
+        }
+    }
+
+    public void step() {
+        for (int i = 1; i < grid.xSize; i++) {
+            for (int j = 1; j < grid.ySize; j++) {
+                for (Animal animal : grid.tiles[i][j].animals) {
+                    animal.lastAction = "Did nothing";
+                }
+            }
+        }
+    }
 
     private int maxAnimals;
     private int maxPlants;
@@ -336,7 +380,7 @@ public class SimulationEngine {
                 first.fight(second);
             }
             if (second.rng.nextFloat() >
-                     1-second.attributes.aggressiveness - first.size() + second.size()) {
+                1-second.attributes.aggressiveness - first.size() + second.size()) {
                 second.fight(first);
             }
             // Otherwise, peaceful meeting so do nothing
@@ -438,18 +482,27 @@ public class SimulationEngine {
                 eater.hunger = 0;
             }
             eater.lastFood.memorize(eater.location);
+            if (eater.lastAction.equals("Did nothing")) {
+                eater.lastAction = "Ate a plant";
+            }
             return 0;
         case Event.DRINK:
             Animal drinker = (Animal)organisms.get(event.firstOrganism);
             // For now, we will just assume an unlimited water supply
             drinker.thirst = 0;
             drinker.lastWater.memorize(drinker.location);
+            if (drinker.lastAction.equals("Did nothing")) {
+                drinker.lastAction = "Drank some water";
+            }
             return 0;
         case Event.MOVE:
             Animal mover = (Animal)organisms.get(event.firstOrganism);
             if (!this.simulateMovement(mover, event.x, event.y)) {
             	stats.switchTile(mover.location.x()-event.x, mover.location.y()-event.y, event.x, event.y, mover.GetSpecies());
                 mover.completeMovement();
+                if (mover.lastAction.equals("Did nothing")) {
+                    mover.lastAction = "Moved";
+                }
                 return 0;
             }
             event.priority++;
@@ -459,6 +512,9 @@ public class SimulationEngine {
             if (!this.simulateMovement(deferred_mover, event.x, event.y)) {
             	stats.switchTile(deferred_mover.location.x()-event.x, deferred_mover.location.y()-event.y, event.x, event.y, deferred_mover.GetSpecies());
                 deferred_mover.completeMovement();
+                if (mover.lastAction.equals("Did nothing")) {
+                    mover.lastAction = "Moved";
+                }
             }
             // If the animal still can't move, tough shit. Try again next step.
             return 0;
@@ -467,12 +523,20 @@ public class SimulationEngine {
             if (organism.increase_age()) {
                 // The animal died
                 if ( isAnimal(event.firstOrganism) ) {
+<<<<<<< HEAD
                 	stats.recordDeath(organism.location.x(), organism.location.y(), true, ((Animal)organism).GetSpecies());
+=======
+                    stats.recordDeath(organism.location.x(), organism.location.y(), true, organism.GetSpecies());
+>>>>>>> 2c8bc60685305abbedc468eb8db804ae50c88d15
                     grid.tiles[organism.location.x()][organism.location.y()]
                         .removeAnimal((Animal)organism);
                 }
                 else {
+<<<<<<< HEAD
                 	stats.recordDeath(organism.location.x(), organism.location.y(), false, (AnimalSpecies)null);
+=======
+                    stats.recordDeath(organism.location.x(), organism.location.y(), false, AnimalSpecies.BEAR);
+>>>>>>> 2c8bc60685305abbedc468eb8db804ae50c88d15
                     grid.tiles[organism.location.x()][organism.location.y()]
                         .removePlant((Plant)organism);
                 }
@@ -485,6 +549,7 @@ public class SimulationEngine {
     }
 
     // This method adds an organism of the specified species to a random location
+<<<<<<< HEAD
     public void addAnimal(AnimalSpecies species) {
         organisms.put(animalIdCount++, new Animal(this.rng.nextInt(grid.xSize)+1,
                                                   this.rng.nextInt(grid.ySize)+1, species,
@@ -499,6 +564,19 @@ public class SimulationEngine {
                                                 this.rng.nextFloat()/2));
         Organism org = organisms.get(plantIdCount+1);
         stats.recordLife(org.location.x(), org.location.y(), false, (AnimalSpecies)null);
+=======
+    public void addRandomAnimal(AnimalSpecies species, int x, int y) {
+        Animal animal = new Animal(x, y, species, this.rng.nextFloat(), true);
+        organisms.put(animalIdCount++, animal);
+        grid.tiles[x][y].addAnimal(animal);
+        stats.recordLife(x, x, true, species);
+    }
+    public void addRandomPlant(int x, int y) {
+        Plant plant = new Plant(x, y, this.rng.nextFloat()*2+0.5f, this.rng.nextFloat()/2);
+        organisms.put(plantIdCount--, plant);
+        grid.tiles[x][y].addPlant(plant);
+        stats.recordLife(x, y, true, AnimalSpecies.BEAR); // Species is ignored
+>>>>>>> 2c8bc60685305abbedc468eb8db804ae50c88d15
     }
 
     public void addExistingAnimal(Animal animal) throws IndexOutOfBoundsException {

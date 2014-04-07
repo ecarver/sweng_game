@@ -91,7 +91,7 @@ class Tile {
     
     //***************End Properties*******************
     
-    private Set<Animal> animals;
+    Set<Animal> animals;
     private Set<Plant> plants;
 
     public Boolean fullAnimals() { return animals.size() >= ANIMAL_CAPACITY; }
@@ -103,13 +103,13 @@ class Tile {
             ret.add(animal.id);
         }
         for (int i = animals.size(); i < ANIMAL_CAPACITY; i++) {
-            red.add(i, 0);
+            ret.add(i, 0);
         }
         for (Plant plant : this.plants) {
             ret.add(plant.id);
         }
         for (int i = plants.size(); i < PLANT_CAPACITY; i++) {
-            red.add(i, 0);
+            ret.add(i, 0);
         }
         return ret;
     }

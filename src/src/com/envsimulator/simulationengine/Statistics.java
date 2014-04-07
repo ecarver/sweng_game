@@ -33,7 +33,7 @@ class Statistics {
         else
             plantsLivingInTile[xTile][yTile]++;
     }
-    
+
     public void recordDeath (int xTile, int yTile, boolean isAnimal, AnimalSpecies species) {
         if (isAnimal) {
             switch (species) {
