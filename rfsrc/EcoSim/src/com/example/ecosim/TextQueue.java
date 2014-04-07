@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.annotation.SuppressLint;
 import android.app.ActionBar.LayoutParams;
 import android.graphics.Color;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -20,7 +21,7 @@ public class TextQueue {
 	}
 	
 	@SuppressLint("InlinedApi") public void addText(String text, int positionX, int positionY, int textSize, 
-			int paddingOne, int paddingTwo, int paddingThree, int paddingFour) {
+			int paddingOne, int paddingTwo, int paddingThree, int paddingFour, boolean center) {
 		
 		//_view = view;
 		
@@ -30,6 +31,9 @@ public class TextQueue {
 
 		
 		TextView temp = new TextView(_view.getContext());
+		if(center) {
+			temp.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+		}
 		temp.setTextColor(Color.rgb(255,255,255));
 	    RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams
 	            ((int)LayoutParams.WRAP_CONTENT,(int)LayoutParams.WRAP_CONTENT);
@@ -57,7 +61,8 @@ public class TextQueue {
 		if(index != -1) {
 			ViewGroup temp = (ViewGroup) _view;
 			_textQueue.remove(index);
-			temp.removeViewAt(index+1);		
+			temp.removeViewAt(index+1);
+			removeText(text);
 		}
 
 	}

@@ -84,7 +84,7 @@ public class RenderList {
 						change = true;
 						return;
 					} else if(temp.getNext() == null) {
-						temp.getPrev().setNext(temp.getNext());
+						temp.getPrev().setNext(null);
 						size--;
 						change = true;
 						return;

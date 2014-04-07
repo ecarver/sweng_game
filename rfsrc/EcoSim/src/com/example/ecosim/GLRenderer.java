@@ -223,126 +223,118 @@ public class GLRenderer implements Renderer {
 		// We will make 30 randomly textures objects
 		for(int i=0; i<_renderList.getSize(); i++)
 		{
-			int random_u_offset = 0;
-			int random_v_offset = 1;
-			
-			// Adding the UV's using the offsets
-			uvs[(i*8) + 0] = random_u_offset;
-			uvs[(i*8) + 1] = random_v_offset;
-			uvs[(i*8) + 2] = random_u_offset;
-			uvs[(i*8) + 3] = (random_v_offset+1);
-			uvs[(i*8) + 4] = (random_u_offset+1);
-			uvs[(i*8) + 5] = (random_v_offset+1);
-			uvs[(i*8) + 6] = (random_u_offset+1);
-			uvs[(i*8) + 7] = random_v_offset;
-
+			float x_start_pos = 0;
+			float x_end_pos = 0.46040515653775f;
+			float y_start_pos = 0;
+			float y_end_pos = 0.28132387706856f;
 			
 			if(loop.getFilename().equals("logo")) {
-				float x_start_pos = 0;
-				float x_end_pos = 0.46040515653775f;
-				float y_start_pos = 0;
-				float y_end_pos = 0.28132387706856f;
-				uvs[(i*8) + 0] = x_start_pos;
-				uvs[(i*8) + 1] = y_start_pos;
-				uvs[(i*8) + 2] = x_start_pos;
-				uvs[(i*8) + 3] = y_end_pos;
-				uvs[(i*8) + 4] = x_end_pos;
-				uvs[(i*8) + 5] = y_end_pos;
-				uvs[(i*8) + 6] = x_end_pos;
-				uvs[(i*8) + 7] = y_start_pos;
+				x_start_pos = 0;
+				x_end_pos = 0.46040515653775f;
+				y_start_pos = 0;
+				y_end_pos = 0.28132387706856f;
 			}
 
 			else if(loop.getFilename().equals("title")) {
-				float x_start_pos = 0;
-				float x_end_pos = 0.68692449355433f;
-				float y_start_pos = 0.28723404255319f;
-				float y_end_pos = 0.38770685579196f;
-				uvs[(i*8) + 0] = x_start_pos;
-				uvs[(i*8) + 1] = y_start_pos;
-				uvs[(i*8) + 2] = x_start_pos;
-				uvs[(i*8) + 3] = y_end_pos;
-				uvs[(i*8) + 4] = x_end_pos;
-				uvs[(i*8) + 5] = y_end_pos;
-				uvs[(i*8) + 6] = x_end_pos;
-				uvs[(i*8) + 7] = y_start_pos;
+				x_start_pos = 0;
+				x_end_pos = 0.68692449355433f;
+				y_start_pos = 0.28723404255319f;
+				y_end_pos = 0.38770685579196f;
 			}
 			
 			else if(loop.getFilename().equals("startgamebutton")) {
-				float x_start_pos = 0;
-				float x_end_pos = 0.60036832412523f;
-				float y_start_pos = 0.39125295508274f;
-				float y_end_pos = 0.47399527186761f;
-				uvs[(i*8) + 0] = x_start_pos;
-				uvs[(i*8) + 1] = y_start_pos;
-				uvs[(i*8) + 2] = x_start_pos;
-				uvs[(i*8) + 3] = y_end_pos;
-				uvs[(i*8) + 4] = x_end_pos;
-				uvs[(i*8) + 5] = y_end_pos;
-				uvs[(i*8) + 6] = x_end_pos;
-				uvs[(i*8) + 7] = y_start_pos;
+				x_start_pos = 0;
+				x_end_pos = 0.60036832412523f;
+				y_start_pos = 0.39125295508274f;
+				y_end_pos = 0.47399527186761f;
 			}
 			
 			else if(loop.getFilename().equals("loadgamebutton")) {
-				float x_start_pos = 0;
-				float x_end_pos = 0.60036832412523f;
-				float y_start_pos = 0.5709219858156f;
-				float y_end_pos = 0.65602836879433f;
-				uvs[(i*8) + 0] = x_start_pos;
-				uvs[(i*8) + 1] = y_start_pos;
-				uvs[(i*8) + 2] = x_start_pos;
-				uvs[(i*8) + 3] = y_end_pos;
-				uvs[(i*8) + 4] = x_end_pos;
-				uvs[(i*8) + 5] = y_end_pos;
-				uvs[(i*8) + 6] = x_end_pos;
-				uvs[(i*8) + 7] = y_start_pos;
+				x_start_pos = 0;
+				x_end_pos = 0.60036832412523f;
+				y_start_pos = 0.5709219858156f;
+				y_end_pos = 0.65602836879433f;
 			}
 			
 			else if(loop.getFilename().equals("howtoplaygamebutton")) {
-				float x_start_pos = 0;
-				float x_end_pos = 0.60036832412523f;
-				float y_start_pos = 0.67139479905437f;
-				float y_end_pos = 0.7565011820331f;
-				uvs[(i*8) + 0] = x_start_pos;
-				uvs[(i*8) + 1] = y_start_pos;
-				uvs[(i*8) + 2] = x_start_pos;
-				uvs[(i*8) + 3] = y_end_pos;
-				uvs[(i*8) + 4] = x_end_pos;
-				uvs[(i*8) + 5] = y_end_pos;
-				uvs[(i*8) + 6] = x_end_pos;
-				uvs[(i*8) + 7] = y_start_pos;
+				x_start_pos = 0;
+				x_end_pos = 0.60036832412523f;
+				y_start_pos = 0.67139479905437f;
+				y_end_pos = 0.7565011820331f;
 			}
 			
 			else if(loop.getFilename().equals("creditsgamebutton")) {
-				float x_start_pos = 0;
-				float x_end_pos = 0.60036832412523f;
-				float y_start_pos = 0.76004728132388f;
-				float y_end_pos = 0.8451536643026f;
-				uvs[(i*8) + 0] = x_start_pos;
-				uvs[(i*8) + 1] = y_start_pos;
-				uvs[(i*8) + 2] = x_start_pos;
-				uvs[(i*8) + 3] = y_end_pos;
-				uvs[(i*8) + 4] = x_end_pos;
-				uvs[(i*8) + 5] = y_end_pos;
-				uvs[(i*8) + 6] = x_end_pos;
-				uvs[(i*8) + 7] = y_start_pos;
+				x_start_pos = 0;
+				x_end_pos = 0.60036832412523f;
+				y_start_pos = 0.76004728132388f;
+				y_end_pos = 0.8451536643026f;
 			}
 			
 			else if(loop.getFilename().equals("startmenuselect")) {
-				float x_start_pos = 0;
-				float x_end_pos = 0.60036832412523f;
-				float y_start_pos = 0.47872340425532f;
-				float y_end_pos = 0.5661938534279f;
-				uvs[(i*8) + 0] = x_start_pos;
-				uvs[(i*8) + 1] = y_start_pos;
-				uvs[(i*8) + 2] = x_start_pos;
-				uvs[(i*8) + 3] = y_end_pos;
-				uvs[(i*8) + 4] = x_end_pos;
-				uvs[(i*8) + 5] = y_end_pos;
-				uvs[(i*8) + 6] = x_end_pos;
-				uvs[(i*8) + 7] = y_start_pos;
+				x_start_pos = 0;
+				x_end_pos = 0.60036832412523f;
+				y_start_pos = 0.47872340425532f;
+				y_end_pos = 0.5661938534279f;
 			}
 			
+			else if(loop.getFilename().equals("sidemenu")) {
+				x_start_pos = 0;
+				x_end_pos = 0.98488664987406f;
+				y_start_pos = 0.00199866755496f;
+				y_end_pos = 0.48434377081945f;
+			}
 			
+			else if(loop.getFilename().equals("tileselect")) {
+				x_start_pos = 0;
+				x_end_pos = 0.35012594458438f;
+				y_start_pos = 0.50299800133245f;
+				y_end_pos = 0.59093937375083f;
+			}
+			
+			else if(loop.getFilename().equals("watertile")) {
+				x_start_pos = 0;
+				x_end_pos = 0.35012594458438f;
+				y_start_pos = 0.61034043970686f;
+				y_end_pos = 0.69828181212525f;
+			}
+			
+			else if(loop.getFilename().equals("grasstile")) {
+				x_start_pos = 0;
+				x_end_pos = 0.35012594458438f;
+				y_start_pos = 0.71730979347102f;
+				y_end_pos = 0.80525116588941f;
+			}
+			
+			else if(loop.getFilename().equals("rabbit")) {
+				x_start_pos = 0;
+				x_end_pos = 0.18891687657431f;
+				y_start_pos = 0.82427848101266f;
+				y_end_pos = 0.86958161225849f;
+			}
+
+			else if(loop.getFilename().equals("bear")) {
+				x_start_pos = 0;
+				x_end_pos = 0.18891687657431f;
+				y_start_pos = 0.88860959360426f;
+				y_end_pos =  0.9339127248501f;
+			}
+			
+			else if(loop.getFilename().equals("flower")) {
+				x_start_pos = 0;
+				x_end_pos = 0.18891687657431f;
+				y_start_pos = 0.95294003997335f;
+				y_end_pos = 0.99824317121919f;
+			}
+			
+			//397 1501
+			uvs[(i*8) + 0] = x_start_pos;
+			uvs[(i*8) + 1] = y_start_pos;
+			uvs[(i*8) + 2] = x_start_pos;
+			uvs[(i*8) + 3] = y_end_pos;
+			uvs[(i*8) + 4] = x_end_pos;
+			uvs[(i*8) + 5] = y_end_pos;
+			uvs[(i*8) + 6] = x_end_pos;
+			uvs[(i*8) + 7] = y_start_pos;
 			
 			
 			
@@ -365,6 +357,8 @@ public class GLRenderer implements Renderer {
 		if(_renderList.getScreen() == _renderList.START_MENU || _renderList.getScreen() == _renderList.CREDITS_SCREEN ||
 				_renderList.getScreen() == _renderList.HOW_TO_PLAY_SCREEN) {
 			id = mContext.getResources().getIdentifier("drawable/ecosimtextureatlas", null, mContext.getPackageName());
+		} else if(_renderList.getScreen() == _renderList.ECO_MAP) {
+			id = mContext.getResources().getIdentifier("drawable/simulationatlas", null, mContext.getPackageName());
 		}
 		
 		// Temporary create a bitmap
@@ -399,6 +393,8 @@ public class GLRenderer implements Renderer {
 		// Create the vertex data
 		for(int i=0;i<_renderList.getSize();i++)
 		{
+			Log.i("Loop", loop.getFilename());
+
 			int offset_x = 0;
 			int offset_y = 0;
 			float scale_x = 543.0f;
@@ -412,48 +408,96 @@ public class GLRenderer implements Renderer {
 				scale_y = 237.0f;
 			}
 			
-			if(loop.getFilename().equals("title")) {
+			else if(loop.getFilename().equals("title")) {
 				offset_x = (int)loop.getPositionX();
 				offset_y = (int)loop.getPositionY();
 				scale_x = 375.0f;
 				scale_y = 81.0f;
 			}
 			
-			if(loop.getFilename().equals("startgamebutton")) {
+			else if(loop.getFilename().equals("startgamebutton")) {
 				offset_x = (int)loop.getPositionX();
 				offset_y = (int)loop.getPositionY();
 				scale_x = 326.0f;
 				scale_y = 68.0f;
 			}
 			
-			if(loop.getFilename().equals("loadgamebutton")) {
+			else if(loop.getFilename().equals("loadgamebutton")) {
 				offset_x = (int)loop.getPositionX();
 				offset_y = (int)loop.getPositionY();
 				scale_x = 326.0f;
 				scale_y = 68.0f;
 			}
 			
-			if(loop.getFilename().equals("howtoplaygamebutton")) {
+			else if(loop.getFilename().equals("howtoplaygamebutton")) {
 				offset_x = (int)loop.getPositionX();
 				offset_y = (int)loop.getPositionY();
 				scale_x = 326.0f;
 				scale_y = 68.0f;
 			}
 			
-			if(loop.getFilename().equals("creditsgamebutton")) {
+			else if(loop.getFilename().equals("creditsgamebutton")) {
 				offset_x = (int)loop.getPositionX();
 				offset_y = (int)loop.getPositionY();
 				scale_x = 326.0f;
 				scale_y = 68.0f;
 			}
 			
-			if(loop.getFilename().equals("startmenuselect")) {
+			else if(loop.getFilename().equals("startmenuselect")) {
 				offset_x = (int)loop.getPositionX();
 				offset_y = (int)loop.getPositionY();
 				scale_x = 326.0f;
 				scale_y = 68.0f;
+			}
+			
+			else if(loop.getFilename().equals("sidemenu")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 393.0f;
+				scale_y = 722.0f;
+			}
+			
+			else if(loop.getFilename().equals("tileselect")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 139.0f;
+				scale_y = 128.0f;
 			}
 
+			else if(loop.getFilename().equals("watertile")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 139.0f;
+				scale_y = 128.0f;
+			}
+			
+			else if(loop.getFilename().equals("grasstile")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 139.0f;
+				scale_y = 128.0f;
+			}
+			
+			else if(loop.getFilename().equals("rabbit")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 75.0f;
+				scale_y = 64.0f;
+			}
+			
+			else if(loop.getFilename().equals("bear")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 75.0f;
+				scale_y = 64.0f;
+			}
+			
+			else if(loop.getFilename().equals("flower")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 75.0f;
+				scale_y = 64.0f;
+			}
 
 			// Create the 2D parts of our 3D vertices, others are default 0.0f
 			vertices[(i*12) + 0] = offset_x;
