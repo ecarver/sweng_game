@@ -20,6 +20,10 @@ abstract class Organism {
     @Override public String toString() { return species; }
     protected int id;
     protected String lastAction;
+
+    public String getLastAction() {
+        return lastAction;
+    }
 }
 
 class Plant extends Organism {
@@ -309,16 +313,42 @@ public class SimulationEngine {
         this.stats = new Statistics();
     }
 
-    public void step() {
-        for (Organism organism : organisms) {
-            if (organism instanceof Animal) {
-                organism.lastAction = "Did nothing";
+    // Generates a random grid. Must be updated if more animal, plant, or tile types are added
+    public void genRandomGrid() {
+        for (int i = 1; i < grid.xSize; i++) {
+            for (int j = 1; j < grid.ySize; j++) {
+                // Generate a random tile environment type
+                if (rng.nextInt(2) == 0) {
+                    grid.tiles[i][j] = new Tile(TileEnvironmentType.DESERT);
+                }
+                else {
+                    grid.tiles[i][j] = new Tile(TileEnvironmentType.FOREST);
+                }
+                // Add 0-2 random animals
+                for (int k = rng.nextInt(Tile.ANIMAL_CAPACITY+1); k < Tile.ANIMAL_CAPACITY; k++) {
+                    if (rng.nextInt(2) == 0) {
+                        this.addRandomAnimal(AnimalSpecies.BEAR, i, j);
+                    }
+                    else {
+                        this.addRandomAnimal(AnimalSpecies.RABBIT, i, j);
+                    }
+                }
+                // Add 0-2 random plants
+                for (int k = rng.nextInt(Tile.PLANT_CAPACITY+1); k < Tile.PLANT_CAPACITY; k++) {
+                    this.addRandomPlant(i, j);
+                }
             }
         }
     }
 
-    public String getLastAction() {
-        return lastAction;
+    public void step() {
+        for (int i = 1; i < grid.xSize; i++) {
+            for (int j = 1; j < grid.ySize; j++) {
+                for (Animal animal : grid.tiles[i][j].animals) {
+                    animal.lastAction = "Did nothing";
+                }
+            }
+        }
     }
 
     private int maxAnimals;
@@ -511,20 +541,17 @@ public class SimulationEngine {
     }
 
     // This method adds an organism of the specified species to a random location
-    public void addAnimal(AnimalSpecies species) {
-        organisms.put(animalIdCount++, new Animal(this.rng.nextInt(grid.xSize)+1,
-                                                  this.rng.nextInt(grid.ySize)+1, species,
-                                                  this.rng.nextFloat(), true));
-        Organism org = organisms.get(animalIdCount-1);
-        stats.recordLife(org.location.x(), org.location.y(), true, org.GetSpecies());
+    public void addRandomAnimal(AnimalSpecies species, int x, int y) {
+        Animal animal = new Animal(x, y, species, this.rng.nextFloat(), true);
+        organisms.put(animalIdCount++, animal);
+        grid.tiles[x][y].addAnimal(animal);
+        stats.recordLife(x, x, true, species);
     }
-    public void addPlant() {
-        organisms.put(plantIdCount--, new Plant(this.rng.nextInt(grid.xSize)+1,
-                                                this.rng.nextInt(grid.ySize)+1,
-                                                this.rng.nextFloat()*2+0.5f,
-                                                this.rng.nextFloat()/2));
-        Organism org = organisms.get(plantIdCount+1);
-        stats.recordLife(org.location.x(), org.location.y(), false, );
+    public void addRandomPlant(int x, int y) {
+        Plant plant = new Plant(x, y, this.rng.nextFloat()*2+0.5f, this.rng.nextFloat()/2);
+        organisms.put(plantIdCount--, plant);
+        grid.tiles[x][y].addPlant(plant);
+        stats.recordLife(x, y, true, AnimalSpecies.BEAR); // Species is ignored
     }
 
     public void addExistingAnimal(Animal animal) throws IndexOutOfBoundsException {
