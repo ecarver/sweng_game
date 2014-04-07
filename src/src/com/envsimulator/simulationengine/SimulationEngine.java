@@ -512,8 +512,8 @@ public class SimulationEngine {
             if (!this.simulateMovement(deferred_mover, event.x, event.y)) {
             	stats.switchTile(deferred_mover.location.x()-event.x, deferred_mover.location.y()-event.y, event.x, event.y, deferred_mover.GetSpecies());
                 deferred_mover.completeMovement();
-                if (mover.lastAction.equals("Did nothing")) {
-                    mover.lastAction = "Moved";
+                if (deferred_mover.lastAction.equals("Did nothing")) {
+                    deferred_mover.lastAction = "Moved";
                 }
             }
             // If the animal still can't move, tough shit. Try again next step.
@@ -523,20 +523,12 @@ public class SimulationEngine {
             if (organism.increase_age()) {
                 // The animal died
                 if ( isAnimal(event.firstOrganism) ) {
-<<<<<<< HEAD
                 	stats.recordDeath(organism.location.x(), organism.location.y(), true, ((Animal)organism).GetSpecies());
-=======
-                    stats.recordDeath(organism.location.x(), organism.location.y(), true, organism.GetSpecies());
->>>>>>> 2c8bc60685305abbedc468eb8db804ae50c88d15
                     grid.tiles[organism.location.x()][organism.location.y()]
                         .removeAnimal((Animal)organism);
                 }
                 else {
-<<<<<<< HEAD
-                	stats.recordDeath(organism.location.x(), organism.location.y(), false, (AnimalSpecies)null);
-=======
                     stats.recordDeath(organism.location.x(), organism.location.y(), false, AnimalSpecies.BEAR);
->>>>>>> 2c8bc60685305abbedc468eb8db804ae50c88d15
                     grid.tiles[organism.location.x()][organism.location.y()]
                         .removePlant((Plant)organism);
                 }
@@ -549,7 +541,6 @@ public class SimulationEngine {
     }
 
     // This method adds an organism of the specified species to a random location
-<<<<<<< HEAD
     public void addAnimal(AnimalSpecies species) {
         organisms.put(animalIdCount++, new Animal(this.rng.nextInt(grid.xSize)+1,
                                                   this.rng.nextInt(grid.ySize)+1, species,
@@ -563,8 +554,8 @@ public class SimulationEngine {
                                                 this.rng.nextFloat()*2+0.5f,
                                                 this.rng.nextFloat()/2));
         Organism org = organisms.get(plantIdCount+1);
-        stats.recordLife(org.location.x(), org.location.y(), false, (AnimalSpecies)null);
-=======
+        stats.recordLife(org.location.x(), org.location.y(), false, AnimalSpecies.BEAR);
+    }
     public void addRandomAnimal(AnimalSpecies species, int x, int y) {
         Animal animal = new Animal(x, y, species, this.rng.nextFloat(), true);
         organisms.put(animalIdCount++, animal);
@@ -576,7 +567,6 @@ public class SimulationEngine {
         organisms.put(plantIdCount--, plant);
         grid.tiles[x][y].addPlant(plant);
         stats.recordLife(x, y, true, AnimalSpecies.BEAR); // Species is ignored
->>>>>>> 2c8bc60685305abbedc468eb8db804ae50c88d15
     }
 
     public void addExistingAnimal(Animal animal) throws IndexOutOfBoundsException {
