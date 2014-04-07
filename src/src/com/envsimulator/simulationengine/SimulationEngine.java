@@ -10,19 +10,21 @@ import com.envsimulator.eventqueue.Event;
 import com.envsimulator.eventqueue.SimulationEvent;
 
 abstract class Organism {
-    public Organism(int x, int y) {
+    public Organism(int x, int y, String action) {
         this.location = new Location(x, y);
+        this.lastAction = action;
     }
     abstract Boolean increase_age();
     Location location;
     protected String species;
     @Override public String toString() { return species; }
     protected int id;
+    protected String lastAction;
 }
 
 class Plant extends Organism {
     public Plant(int x, int y, float maxFood, float growthRate, float food) {
-        super(x, y);
+        super(x, y, "Grew a little");
         this.maxFood = maxFood;
         this.growthRate = growthRate;
         this.food = food;
@@ -93,7 +95,7 @@ enum AnimalSpecies {
 
 class Animal extends Organism implements Comparable<Animal> {
     public Animal(int x, int y, AnimalSpecies attributes, float evolutionaryFitness, Boolean isMale) {
-        super(x, y);
+        super(x, y, "Did nothing");
         this.evolutionaryFitness = evolutionaryFitness;
         this.isMale = isMale;
         this.injury_health = 1.0f;
@@ -125,6 +127,10 @@ class Animal extends Organism implements Comparable<Animal> {
     Random rng;
 
     void fight(Animal other) {
+        this.lastAction = "Started a fight";
+        if (other.lastAction != "Started a fight") {
+            other.lastAction = "Defended itself";
+        }
         // This animal is the aggressor. The aggressor gets a slight bonus in the fight
         float damageToOther = this.health()*(this.size()-other.size())*
             (this.evolutionaryFitness-other.evolutionaryFitness) + 0.05f;
@@ -199,7 +205,7 @@ class Animal extends Organism implements Comparable<Animal> {
     	return evolutionaryFitness;
     }
 
-    public float Getincrease_age()
+    public float GetAge()
     {
     	return age;
     }
@@ -302,9 +308,17 @@ public class SimulationEngine {
         this.rng = new Random();
     }
 
-    // public void step() {
-        
-    // }
+    public void step() {
+        for (Organism organism : organisms) {
+            if (organism instanceof Animal) {
+                organism.lastAction = "Did nothing";
+            }
+        }
+    }
+
+    public String getLastAction() {
+        return lastAction;
+    }
 
     private int maxAnimals;
     private int maxPlants;
@@ -435,17 +449,26 @@ public class SimulationEngine {
                 eater.hunger = 0;
             }
             eater.lastFood.memorize(eater.location);
+            if (eater.lastAction.equals("Did nothing")) {
+                eater.lastAction = "Ate a plant";
+            }
             return 0;
         case Event.DRINK:
             Animal drinker = (Animal)organisms.get(event.firstOrganism);
             // For now, we will just assume an unlimited water supply
             drinker.thirst = 0;
             drinker.lastWater.memorize(drinker.location);
+            if (drinker.lastAction.equals("Did nothing")) {
+                drinker.lastAction = "Drank some water";
+            }
             return 0;
         case Event.MOVE:
             Animal mover = (Animal)organisms.get(event.firstOrganism);
             if (!this.simulateMovement(mover, event.x, event.y)) {
                 mover.completeMovement();
+                if (mover.lastAction.equals("Did nothing")) {
+                    mover.lastAction = "Moved";
+                }
                 return 0;
             }
             event.priority++;
@@ -454,6 +477,9 @@ public class SimulationEngine {
             Animal deferred_mover = (Animal)organisms.get(event.firstOrganism);
             if (!this.simulateMovement(deferred_mover, event.x, event.y)) {
                 deferred_mover.completeMovement();
+                if (mover.lastAction.equals("Did nothing")) {
+                    mover.lastAction = "Moved";
+                }
             }
             // If the animal still can't move, tough shit. Try again next step.
             return 0;
