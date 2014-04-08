@@ -191,7 +191,7 @@ class Animal extends Organism implements Comparable<Animal> {
         return false;
     }
 
-    public float health() { return injury_health+(1f-hunger)+(1f-thirst)+size(); } // Need a formula to calculate this
+    public float health() { return injury_health*((1f-hunger)+(1f-thirst)+size()+evolutionaryFitness); } // Need a formula to calculate this
     public float size() {
         // Let's assume that an animal is at its prime in the middle of life,
         // and its size increases steadily for the first half of its life
@@ -481,12 +481,13 @@ public class SimulationEngine {
                 if (second.attributes.isHerbivore) {
                     if (first.size() > second.size() && first.hunger > 0.0f) {
                         // The first will try to eat the second
-                        if (first.evolutionaryFitness + first.rng.nextFloat() >
-                            second.evolutionaryFitness + second.rng.nextFloat()) {
+                        if (first.evolutionaryFitness + first.rng.nextFloat()*first.size() >
+                            second.evolutionaryFitness + second.rng.nextFloat()*second.speed()) {
                             // The second dies
                             second.injury_health -= 10.0f;
                             // The first eats
                             first.hunger -= second.size();
+                            first.lastAction = "Ate " + second.attributes.species + Integer.toString(second.id);
                             if ( first.hunger < 0.0f ) {
                                 first.hunger = 0.0f;
                             }
@@ -499,12 +500,13 @@ public class SimulationEngine {
                 if (first.attributes.isHerbivore) {
                     if (second.size() > first.size() && second.hunger > 0.0f) {
                         // The second will try to eat the first
-                        if (second.evolutionaryFitness + second.rng.nextFloat() >
-                            first.evolutionaryFitness + first.rng.nextFloat()) {
+                        if (second.evolutionaryFitness + second.rng.nextFloat()*second.size() >
+                            first.evolutionaryFitness + first.rng.nextFloat()*first.speed()) {
                             // The first dies. It will be "cleaned up" by the aging step
                             first.injury_health -= 10.0f;
                             // The second eats
                             second.hunger -= first.size();
+                            second.lastAction = "Ate " + first.attributes.species + Integer.toString(first.id);
                             if ( second.hunger < 0.0f ) {
                                 second.hunger = 0.0f;
                             }
