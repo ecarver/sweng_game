@@ -50,6 +50,8 @@ public class MainActivity extends Activity {
 
 		engine = new SimulationEngine(4,4);
 		
+		eventQueue = new EventQueue();
+		
         //_renderList.clearList();
 		glSurf = new GLSurf(this, _renderList, _textQueue);
         glSurfaceView = glSurf;
@@ -211,15 +213,13 @@ public class MainActivity extends Activity {
 				Toast.makeText(this.getApplicationContext(), "Step", 
 					Toast.LENGTH_LONG).show();
 				
-				//TODO: Step here
+				stepSimulation();
 			} else if (keyCode == 62) {
 				_renderList.setScreen(_renderList.STAT_SCREEN);
 				_textQueue.removeText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()));
 					_textQueue.removeText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")");
 					_textQueue.removeText("Directional Arrows: Move | Enter Key: Step | Space Key: Stats | Escape Key: Save and Exit");
 				initStatsMenu();
-					
-					//TODO: Step here			
 			} else if (keyCode == 4) {
 				if(verifyExit > 0) {
 					//TODO: Save
@@ -238,7 +238,7 @@ public class MainActivity extends Activity {
 		} else if(_renderList.getScreen() == _renderList.STAT_SCREEN) {
 			if(keyCode == 67) {
 				_textQueue.removeText("Backspace: Return to Start Menu");
-				_textQueue.removeText("Some text");
+				_textQueue.removeText(getStatsText());
 				_renderList.deleteRenderLink("background");
 				_renderList.setScreen(_renderList.ECO_MAP);
 				initStartSimulation();
@@ -311,6 +311,7 @@ public class MainActivity extends Activity {
 		
 		_renderList.clearList();
 		//Log.v("engine", Integer.toString(engine.grid.xSize));
+		// TODO: Load simulation from save instead of random Gen
 		engine.genRandomGrid();
 		for(int x = 0; x < engine.grid.xSize; x++) {
 			for(int y = 0; y < engine.grid.ySize; y++) {
@@ -344,7 +345,7 @@ public class MainActivity extends Activity {
 				for(int i = 0; i < animals.size(); i++) {
 					//Log.v("engine", animals.get(i).toString());
 					tempOrganismInfo.add(new OrganismInfo(animals.get(i).GetSpecies().species + Integer.toString(animals.get(i).id), 
-						Float.toString(animals.get(i).GetHealth()),  animals.get(i).getLastAction()));
+						Float.toString(animals.get(i).GetHealth()*1000f),  animals.get(i).getLastAction()));
 				}
 				
 				for(int i = 0; i < plants.size(); i++) {
@@ -375,7 +376,6 @@ public class MainActivity extends Activity {
 		
 		_tileInfo.setLocation(tempx,tempy);
 		
-		// TODO: Load simulation from save
 		//_renderList.clearList();
 		_textQueue.removeText("Up Arrow: Move Up | Down Arrow: Move Down | Enter Key: Select");
 		_renderList.addRenderLink(new RenderLink("sidemenu", "sidemenu", 1, -9.0f, -1.1f));
@@ -391,8 +391,9 @@ public class MainActivity extends Activity {
 	}
 	
 	public void initStatsMenu() {
+		
 		_renderList.addRenderLink(new RenderLink("background", "background", 10, -30.f, 0));
-		_textQueue.addText("Some text", 0, 0, 18, 
+		_textQueue.addText(getStatsText(), 0, 0, 18, 
 				10, 10, 10, 10, false);
 		_textQueue.addText("Backspace: Return to Start Menu", 1, 670, 12, 
 				10, 10, 10, 10, true);
@@ -410,6 +411,97 @@ public class MainActivity extends Activity {
                 eventQueue.popEvent();
             }
         }
+        
+		int tempx = _tileInfo.getTileX();
+		int tempy = _tileInfo.getTileY();
+		
+		_textQueue.removeText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()));
+		//TODO: Change hardcode
+				organismData = new OrganismInfo[engine.grid.xSize][engine.grid.ySize][4];
+				
+				for(int x = 0; x < engine.grid.xSize; x++) {
+					for(int y = 0; y < engine.grid.ySize; y++) {
+						for(int z = 0; z < 4; z++)  {
+							organismData[x][y][z] = new OrganismInfo("null","null","null");
+						}
+					}
+				}
+				
+				_renderList.clearList();
+				//Log.v("engine", Integer.toString(engine.grid.xSize));
+				for(int x = 0; x < engine.grid.xSize; x++) {
+					for(int y = 0; y < engine.grid.ySize; y++) {
+						//Log.v("engine", "x: " + Integer.toString(x) + "y: " + Integer.toString(y));
+						//Log.v("engine", engine.grid.tiles[x][y].GetEnvironmentType().toString());
+						//Log.v("engine", Integer.toString(engine.grid.tiles[x][y].ANIMAL_CAPACITY));
+						//Log.v("engine"YOLO" +TileEnvironmentType.DESERT.toString());
+						//Log.v("engine", engine.grid.tiles[x][y].GetEnvironmentTypeToString());", 
+						if(engine.grid.tiles[x][y].GetEnvironmentTypeToString().equals("DESERT")) {
+							//Log.v("engine", "here");
+							_tileInfo.setLocation(x, y);
+							_renderList.addRenderLink(new RenderLink("tile" + Integer.toString((y*4) + x), "grasstile", 1, 
+								_tileInfo.getXLocation(), _tileInfo.getYLocation()));
+						} else if(engine.grid.tiles[x][y].GetEnvironmentTypeToString().equals("FOREST")) {
+							_tileInfo.setLocation(x, y);
+							_renderList.addRenderLink(new RenderLink("tile" + Integer.toString((y*4) + x), "watertile", 1, 
+								_tileInfo.getXLocation(), _tileInfo.getYLocation()));
+						}
+						
+						ArrayList<Animal> animals = new ArrayList<Animal>();
+						ArrayList<Plant> plants = new ArrayList<Plant>();
+						
+						animals.addAll(engine.grid.tiles[x][y].GetAnimals());
+						
+						//Log.v("engine", Integer.toString(animals.size()));
+						
+						plants.addAll(engine.grid.tiles[x][y].GetPlants());
+
+						ArrayList<OrganismInfo>	tempOrganismInfo = new ArrayList<OrganismInfo>();
+						
+						for(int i = 0; i < animals.size(); i++) {
+							//Log.v("engine", animals.get(i).toString());
+							tempOrganismInfo.add(new OrganismInfo(animals.get(i).GetSpecies().species + Integer.toString(animals.get(i).id), 
+								Float.toString(animals.get(i).GetHealth()*1000f),  animals.get(i).getLastAction()));
+						}
+						
+						for(int i = 0; i < plants.size(); i++) {
+							tempOrganismInfo.add(new OrganismInfo(plants.get(i).attributes.species + Integer.toString(plants.get(i).id), 
+								"N/A",  plants.get(i).getLastAction()));
+						}
+						
+						for(int i = 0; i < tempOrganismInfo.size(); i++) {
+							organismData[x][y][i] = tempOrganismInfo.get(i);
+						}
+						
+						for(int i = 0; i < organismData[x][y].length; i++) {
+							//Log.v("engine", organismData[x][y][i].getName());
+							if(organismData[x][y][i].getName().contains("Bear")) {
+								_renderList.addRenderLink(new RenderLink(organismData[x][y][i].getName(), "bear", 2, 
+									getAnimalLocationX(x,i), getAnimalLocationY(y,i)));
+							} else if(organismData[x][y][i].getName().contains("Rabbit")) {
+								_renderList.addRenderLink(new RenderLink(organismData[x][y][i].getName(), "rabbit", 2, 
+										getAnimalLocationX(x,i), getAnimalLocationY(y,i)));
+							} else if(organismData[x][y][i].getName().contains("Plant")) {
+								_renderList.addRenderLink(new RenderLink(organismData[x][y][i].getName(), "flower", 2, 
+										getAnimalLocationX(x,i), getAnimalLocationY(y,i)));
+							}
+						}
+
+					}
+				}
+				
+				_tileInfo.setLocation(tempx,tempy);
+				
+				//_renderList.clearList();
+				_renderList.addRenderLink(new RenderLink("sidemenu", "sidemenu", 1, -9.0f, -1.1f));
+
+				_textQueue.addText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()), 0, 0, 14, 
+						10, 10, 10, 10, false);
+				//Actual code
+				_renderList.addRenderLink(new RenderLink("tileselect", "tileselect", 3, _tileInfo.getXLocation(), _tileInfo.getYLocation()));
+				//_textQueue.addText("Tile(0,0)", 410, 10, 11, 
+				//		10, 10, 10, 10, false);
+        
     }
 	
 	public float getAnimalLocationX(int tileX, int spot) {
@@ -459,10 +551,10 @@ public class MainActivity extends Activity {
 		
 		return temp;
 	}
-	
+	//
 	public String getStatsText() {
-		String temp = "";
-		
+		//TODO: get stats info
+		String temp = "Put stuff here";
 		
 		return temp;
 	}
