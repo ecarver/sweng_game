@@ -1,4 +1,4 @@
-/**package com.example.ecosim;
+package com.example.ecosim;
 
 class Statistics {
     public Statistics (int xGridSize, int yGridSize, int waterTiles) {
@@ -8,6 +8,14 @@ class Statistics {
         this.numTiles = this.xGridSize*this.yGridSize;
         this.waterTiles = waterTiles;
         this.landTiles = numTiles - waterTiles;
+        
+        bearsDiedInTile = new int[xGridSize][yGridSize];
+        rabbitsDiedInTile = new int[xGridSize][yGridSize];
+        plantsDiedInTile = new int[xGridSize][yGridSize];
+        
+        bearsLivingInTile = new int[xGridSize][yGridSize];
+        rabbitsLivingInTile = new int[xGridSize][yGridSize];
+        plantsLivingInTile = new int[xGridSize][yGridSize];
     }
     
     private int xGridSize;
@@ -17,46 +25,37 @@ class Statistics {
     private int waterTiles;
     private int landTiles;
     
-    private int bearsDiedInTile[xGridSize][yGridSize];
-    private int rabbitsDiedInTile[xGridSize][yGridSize];
-    private int plantsDiedInTile[xGridSize][yGridSize];//
+    private int bearsDiedInTile[][];
+    private int rabbitsDiedInTile[][];
+    private int plantsDiedInTile[][];
     
-    private int bearsLivingInTile[xGridSize][yGridSize];
-    private int rabbitsLivingInTile[xGridSize][yGridSize];
-    private int plantsLivingInTile[xGridSize][yGridSize];
+    private int bearsLivingInTile[][];
+    private int rabbitsLivingInTile[][];
+    private int plantsLivingInTile[][];
     
     public void recordLife (int xTile, int yTile, boolean isAnimal, AnimalSpecies species) {
-        if (isAnimal) {
-            switch (species) {
-                case AnimalSpecies.BEAR:
-                    bearsLivingInTile[xTile][yTile]++;
-                    break;
-                case AnimalSpecies.RABBIT:
-                    rabbitsLivingInTile[xTile][yTile]++;
-                    break;
-                default:
-                    break
-            }
-        }
-        else
-            plantsLivingInTile[xTile][yTile]++;
+    	
+    	if(isAnimal) {
+    		if(species.species.equals("Rabbit")) {
+    			bearsLivingInTile[xTile][yTile]++;
+    		} else if(species.species.equals("Bear")) {
+    			rabbitsLivingInTile[xTile][yTile]++;
+    		}
+    	} else {
+    		plantsLivingInTile[xTile][yTile]++;
+    	}
     }
     
     public void recordDeath (int xTile, int yTile, boolean isAnimal, AnimalSpecies species) {
-        if (isAnimal) {
-            switch (species) {
-                case AnimalSpecies.BEAR:
-                    bearsLivingInTile[xTile][yTile]--;
-                    break;
-                case AnimalSpecies.RABBIT:
-                    rabbitsLivingInTile[xTile][yTile]--;
-                    break;
-                default:
-                    break
-            }
-        }
-        else
-            plantsLivingInTile[xTile][yTile]--;
+    	if(isAnimal) {
+    		if(species.species.equals("Rabbit")) {
+    			bearsLivingInTile[xTile][yTile]--;
+    		} else if(species.species.equals("Bear")) {
+    			rabbitsLivingInTile[xTile][yTile]--;
+    		}
+    	} else {
+    		plantsLivingInTile[xTile][yTile]--;
+    	}
     }
     
     public int totalOrganisms () {
@@ -83,7 +82,7 @@ class Statistics {
         int livePlants = 0;
         for (int i = 0; i < xGridSize; i++) {
             for (int j = 0; j < yGridSize; j++) {
-                livePlants += plantsLivingInTile[i][j];
+                livePlants = livePlants += plantsLivingInTile[i][j];
             }
         }
         return livePlants;
@@ -93,10 +92,10 @@ class Statistics {
         int deadPlants = 0;
         for (int i = 0; i < xGridSize; i++) {
             for (int j = 0; j < yGridSize; j++) {
-                deadPlants += plantsDiedInTile[i][j];
+                deadPlants = deadPlants += plantsDiedInTile[i][j];
             }
         }
-        return livePlants;
+        return deadPlants;
     }
     
     public int liveAnimals() {
@@ -149,21 +148,16 @@ class Statistics {
     
     public void switchTile(int x, int y, int xMovement, int yMovement, boolean isAnimal, AnimalSpecies species) {
         if (isAnimal) {
-            switch (species) {
-                case AnimalSpecies.BEAR:
-                    bearsLivingInTile[x][y]--;
-                    bearsLivingInTile[x+xMovement][y+yMovement]++;
-                    break;
-                case AnimalSpecies.RABBIT:
-                    rabbitsLivingInTile[x][y]--;
-                    rabbitsLivingInTile[x+xMovement][y+yMovement]++;
-                    break;
-                default:
-                    break
-            }
-        }
-        else
+        	if(species.species.equals("Bear")) {
+                bearsLivingInTile[x][y]--;
+                bearsLivingInTile[x+xMovement][y+yMovement]++;
+        	} else if(species.species.equals("Rabbit")) {
+        		rabbitsLivingInTile[x][y]--;
+                rabbitsLivingInTile[x+xMovement][y+yMovement]++;
+        	} 
+        } else {
             plantsLivingInTile[x][y]--;
             plantsLivingInTile[x+xMovement][y+yMovement]++;
+        }
     }
-}**/
+}
