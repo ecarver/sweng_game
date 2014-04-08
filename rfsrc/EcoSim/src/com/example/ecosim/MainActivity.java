@@ -210,8 +210,8 @@ public class MainActivity extends Activity {
 						10, 10, 10, 10, false);
 				_renderList.addRenderLink(new RenderLink("tileselect", "tileselect", 3, _tileInfo.getXLocation(), _tileInfo.getYLocation()));
 			} else if(keyCode == 66) {
-				Toast.makeText(this.getApplicationContext(), "Step", 
-					Toast.LENGTH_LONG).show();
+				// Toast.makeText(this.getApplicationContext(), "Step", 
+				// 	Toast.LENGTH_LONG).show();
 				
 				stepSimulation();
 			} else if (keyCode == 62) {

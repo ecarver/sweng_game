@@ -36,10 +36,10 @@ public class EventQueue {
 class EventComparator implements Comparator<Event> {
     @Override public int compare(Event left, Event right) {
         if (left.priority < right.priority) {
-            return 1;
+            return -1;
         }
         if (left.priority > right.priority) {
-            return -1;
+            return 1;
         }
         return 0;
     }

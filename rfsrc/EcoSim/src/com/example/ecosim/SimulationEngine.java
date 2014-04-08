@@ -149,7 +149,7 @@ class Animal extends Organism implements Comparable<Animal> {
 
     void fight(Animal other) {
         this.lastAction = "Attacked " + other.attributes.species + Integer.toString(other.id);
-        other.lastAction = "Defended itself against " + this.attributes.species + Integer.toString(this.id);
+        other.lastAction = "Defended itself from " + this.attributes.species + Integer.toString(this.id);
         // This animal is the aggressor. The aggressor gets a slight bonus in the fight
         float damageToOther = this.health()*(this.size()-other.size()) +
             (this.evolutionaryFitness-other.evolutionaryFitness) + 0.1f + this.rng.nextFloat();
@@ -368,10 +368,10 @@ class Animal extends Organism implements Comparable<Animal> {
         float foodDesire = this.foodDesire();
         float waterDesire = this.waterDesire();
         if (foodDesire > waterDesire) {
-            return new Location(lastFood);
+            return lastFood;
         }
         if (foodDesire < waterDesire) {
-            return new Location(lastWater);
+            return lastWater;
         }
         if (foodDesire < 0.0f && waterDesire < 0.0f) {
             return new Location(rng.nextInt(), rng.nextInt());
@@ -414,7 +414,7 @@ public class SimulationEngine {
                     grid.tiles[i][j] = new Tile(TileEnvironmentType.FOREST);
                 }
                 // Add 0-2 random animals
-                for (int k = rng.nextInt(Tile.ANIMAL_CAPACITY+1); k < Tile.ANIMAL_CAPACITY-1; k++) {
+                for (int k = rng.nextInt(Tile.ANIMAL_CAPACITY+1); k < Tile.ANIMAL_CAPACITY; k++) {
                     if (rng.nextInt(2) == 0) {
                         this.addRandomAnimal(AnimalSpecies.BEAR, i, j);
                     }
