@@ -292,7 +292,7 @@ public class MainActivity extends Activity {
 		organismData = new OrganismInfo[engine.grid.xSize][engine.grid.ySize][4];
 		
 		for(int x = 0; x < engine.grid.xSize; x++) {
-			for(int y = 0; y < engine.grid.ySize; y--) {
+			for(int y = 0; y < engine.grid.ySize; y++) {
 				for(int z = 0; z < 4; z++)  {
 					organismData[x][y][z] = new OrganismInfo("null","null","null");
 				}
@@ -307,10 +307,10 @@ public class MainActivity extends Activity {
 				//Log.v("engine", "x: " + Integer.toString(x) + "y: " + Integer.toString(y));
 				//Log.v("engine", engine.grid.tiles[x][y].GetEnvironmentType().toString());
 				//Log.v("engine", Integer.toString(engine.grid.tiles[x][y].ANIMAL_CAPACITY));
-				//Log.v("engine", "YOLO" +TileEnvironmentType.DESERT.toString());
-				Log.v("engine", engine.grid.tiles[x][y].GetEnvironmentTypeToString());
+				//Log.v("engine"YOLO" +TileEnvironmentType.DESERT.toString());
+				//Log.v("engine", engine.grid.tiles[x][y].GetEnvironmentTypeToString());", 
 				if(engine.grid.tiles[x][y].GetEnvironmentTypeToString().equals("DESERT")) {
-					Log.v("engine", "here");
+					//Log.v("engine", "here");
 					_tileInfo.setLocation(x, y);
 					_renderList.addRenderLink(new RenderLink("tile" + Integer.toString((y*4) + x), "grasstile", 1, 
 						_tileInfo.getXLocation(), _tileInfo.getYLocation()));
@@ -325,22 +325,39 @@ public class MainActivity extends Activity {
 				
 				animals.addAll(engine.grid.tiles[x][y].GetAnimals());
 				
+				//Log.v("engine", Integer.toString(animals.size()));
+				
 				plants.addAll(engine.grid.tiles[x][y].GetPlants());
 
 				ArrayList<OrganismInfo>	tempOrganismInfo = new ArrayList<OrganismInfo>();
 				
 				for(int i = 0; i < animals.size(); i++) {
-					tempOrganismInfo.add(new OrganismInfo(animals.get(i).species + Integer.toString(animals.get(i).id), 
+					//Log.v("engine", animals.get(i).toString());
+					tempOrganismInfo.add(new OrganismInfo(animals.get(i).GetSpecies().species + Integer.toString(animals.get(i).id), 
 						Float.toString(animals.get(i).GetHealth()),  animals.get(i).getLastAction()));
 				}
 				
 				for(int i = 0; i < plants.size(); i++) {
-					tempOrganismInfo.add(new OrganismInfo(plants.get(i).species + Integer.toString(plants.get(i).id), 
+					tempOrganismInfo.add(new OrganismInfo(plants.get(i).attributes.species + Integer.toString(plants.get(i).id), 
 						"N/A",  plants.get(i).getLastAction()));
 				}
 				
 				for(int i = 0; i < tempOrganismInfo.size(); i++) {
 					organismData[x][y][i] = tempOrganismInfo.get(i);
+				}
+				
+				for(int i = 0; i < organismData[x][y].length; i++) {
+					//Log.v("engine", organismData[x][y][i].getName());
+					if(organismData[x][y][i].getName().contains("Bear")) {
+						_renderList.addRenderLink(new RenderLink(organismData[x][y][i].getName(), "bear", 2, 
+							getAnimalLocationX(x,i), getAnimalLocationY(y,i)));
+					} else if(organismData[x][y][i].getName().contains("Rabbit")) {
+						_renderList.addRenderLink(new RenderLink(organismData[x][y][i].getName(), "rabbit", 2, 
+								getAnimalLocationX(x,i), getAnimalLocationY(y,i)));
+					} else if(organismData[x][y][i].getName().contains("Plant")) {
+						_renderList.addRenderLink(new RenderLink(organismData[x][y][i].getName(), "flower", 2, 
+								getAnimalLocationX(x,i), getAnimalLocationY(y,i)));
+					}
 				}
 
 			}
@@ -350,8 +367,8 @@ public class MainActivity extends Activity {
 		// TODO: Load simulation from save
 		//_renderList.clearList();
 		_textQueue.removeText("Up Arrow: Move Up | Down Arrow: Move Down | Enter Key: Select");
-		/*
 		_renderList.addRenderLink(new RenderLink("sidemenu", "sidemenu", 1, -9.0f, -1.1f));
+		/*
 		_renderList.addRenderLink(new RenderLink("tile0", "watertile", 1, 575f, 488f));
 		_renderList.addRenderLink(new RenderLink("tile1", "grasstile", 1, 703f, 488f));
 		_renderList.addRenderLink(new RenderLink("tile2", "grasstile", 1, 831f, 488f));
@@ -368,13 +385,14 @@ public class MainActivity extends Activity {
 		_renderList.addRenderLink(new RenderLink("tile13", "grasstile", 1, 703f, 128f));
 		_renderList.addRenderLink(new RenderLink("tile14", "grasstile", 1, 831f, 128f));
 		_renderList.addRenderLink(new RenderLink("tile15", "grasstile", 1, 959f, 128f));
-		*/
+		
 		//fake code
 		_renderList.addRenderLink(new RenderLink("rabbit1", "rabbit", 2, 959f, 128f));
 		_renderList.addRenderLink(new RenderLink("rabbit2", "rabbit", 2, 959f, 192f));
 		_renderList.addRenderLink(new RenderLink("flower1", "flower", 2, 1023f, 128f));
 		_renderList.addRenderLink(new RenderLink("bear1", "bear", 2, 1023f, 192f));
-		_renderList.addRenderLink(new RenderLink("flower2", "flower", 2, getAnimalLocationX(0,2), getAnimalLocationY(0,2)));
+		*/
+		//_renderList.addRenderLink(new RenderLink("flower2", "flower", 2, getAnimalLocationX(0,2), getAnimalLocationY(0,2)));
 		_textQueue.addText("Name: bear1\nLife Remaining: 55\nLast Action: Fight\n\nName: bear2\nLife Remaining: 55\nLast Action: Fight\n\n"
 				+ "Name: bear3\nLife Remaining: 55\nLast Action: Fight\n\nName: bear4\nLife Remaining: 55\nLast Action: Fight\n\n", 0, 0, 18, 
 				10, 10, 10, 10, false);
