@@ -24,12 +24,22 @@ abstract class Organism {
     }
 }
 
+enum PlantSpecies {
+    GENERIC("Plant");
+    PlantSpecies(String species) {
+        this.species = species;
+    }
+
+    String species;
+}
+
 class Plant extends Organism implements Comparable<Plant>{
     public Plant(int x, int y, float maxFood, float growthRate, float food) {
         super(x, y, "Grew a little");
         this.maxFood = maxFood;
         this.growthRate = growthRate;
         this.food = food;
+        this.attributes = PlantSpecies.GENERIC;
     }
     public Plant(int x, int y, float maxFood, float growthRate) {
         this(x, y, maxFood, growthRate, 0.0f);
@@ -44,13 +54,13 @@ class Plant extends Organism implements Comparable<Plant>{
     float growthRate;
     float food;
     float maxFood;
+    PlantSpecies attributes;
 
     @Override public int compareTo(Plant other) {
         // All plants are equal in the eyes of the simulation engine
         return 0;
     }
 
-    
     //***************Begin Properties*******************
     public float GetGrowthRate()
     {
