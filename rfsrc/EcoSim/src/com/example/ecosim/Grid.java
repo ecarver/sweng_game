@@ -150,7 +150,7 @@ class Tile {
         for (Animal animal : this.animals) {
             // Herbivores will try to eat the largest plant
             if (animal.attributes.isHerbivore && plants.size() > 0) {
-                Plant biggestPlant = (Plant)localPlants.toArray()[0];
+                Plant biggestPlant = (Plant)plants.iterator();
                 for (Plant currentPlant : localPlants) {
                     if (currentPlant.food > biggestPlant.food) {
                         biggestPlant = currentPlant;
