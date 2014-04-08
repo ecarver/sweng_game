@@ -204,8 +204,80 @@ class Animal extends Organism implements Comparable<Animal> {
         return attributes.size*ageScalingFactor;
     }
 
-    //***************Begin Properties*******************
+//***************Begin Properties*******************
     
+    public void SetHealth(String Data)
+    {
+    	injury_health = Float.parseFloat(Data);
+    }
+    
+    public void SetThirst(String Data)
+    {
+    	thirst = Float.parseFloat(Data);
+    }
+    
+    public void SetHunger(String Data)
+    {
+    	hunger = Float.parseFloat(Data);
+    }
+    
+    public void SetEvolutionaryFitness(String Data)
+    {
+    	evolutionaryFitness = Float.parseFloat(Data);
+    }
+
+    public void SetAge(String Data)
+    {
+    	age = Float.parseFloat(Data);
+    }
+    
+    public void SetMovement(String Data)
+    {
+    	movement = Float.parseFloat(Data);
+    }
+
+    public void SetGender(String Data)
+    {
+    	isMale = Boolean.parseBoolean(Data);
+    }
+
+    public void SetSpecies(String Data)
+    {
+    	if(Data == "BEAR")
+    	{
+        	attributes = AnimalSpecies.BEAR;
+    	}
+    	else if(Data == "RABBIT")
+    	{
+        	attributes = AnimalSpecies.RABBIT;
+    	}
+    }
+
+    public void SetLastFood(String Data)
+    {
+    	String[] DataArry;
+    	
+    	DataArry = Data.split("x");
+    	
+    	lastFood = new Location();
+    	lastFood.memorize(Integer.parseInt(DataArry[0]), Integer.parseInt(DataArry[1]));
+    }
+
+    public void SetLastWater(String Data)
+    {
+    	String[] DataArry;
+    	
+    	DataArry = Data.split("x");
+    	
+    	lastWater = new Location();
+    	lastFood.memorize(Integer.parseInt(DataArry[0]), Integer.parseInt(DataArry[1]));
+    }
+
+    public void Setrng()
+    {
+    	rng = new Random(); 
+    }
+
     public float GetHealth()
     {
     	return injury_health;
