@@ -400,7 +400,7 @@ public class GLRenderer implements Renderer {
 		// Create the vertex data
 		for(int i=0;i<_renderList.getSize();i++)
 		{
-			Log.i("Loop", loop.getFilename());
+			//Log.i("Loop", loop.getFilename());
 
 			int offset_x = 0;
 			int offset_y = 0;

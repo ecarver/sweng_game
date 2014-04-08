@@ -4,13 +4,17 @@ package com.example.ecosim;
 
 import java.io.*;
 import java.util.*;
+
 import android.app.Activity;
+import android.content.Context;
+import android.util.Log;
 
 public final class StartMenu extends Activity
 {
-	static final String FileName = "SWENG_GAME";
-  public StartMenu() {
-	  
+	Context _context;
+	public static final String FileName = "SWENG_GAME";
+  public StartMenu(Context context) {
+	  _context = context;
   }
   public SimulationEngine LoadSimulation() throws IOException
   {
@@ -31,6 +35,7 @@ public final class StartMenu extends Activity
   	}
   	catch(Exception e)
   	{
+        Log.v("Load", "File not found");
   		return null;
   	}
 
@@ -147,10 +152,14 @@ public final class StartMenu extends Activity
   public void SaveSimulation(SimulationEngine Engine) throws IOException
   {
   	String SimulationData = GetSimulationData(Engine);
-  	FileOutputStream fos; 		
-  	
-  	fos = openFileOutput(FileName, MODE_PRIVATE);
+  	Log.v("Save", SimulationData);
+  	//FileOutputStream fos;
+  	//File file = new File(FileName);
+  	//fos = new FileOutputStream(file);
+  	FileOutputStream fos = _context.openFileOutput(FileName, Context.MODE_PRIVATE);
+  	//
   	fos.write(SimulationData.getBytes());
+  	fos.flush();
   	fos.close();
 
   }
