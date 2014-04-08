@@ -19,6 +19,7 @@ public class MainActivity extends Activity {
 	// Our OpenGL Surfaceview
 	private OrganismInfo organismData[][][];
 	private SimulationEngine engine;
+    private EventQueue eventQueue;
 	private GLSurfaceView glSurfaceView;
 	private GLSurf glSurf;
 	private RenderList _renderList;
@@ -398,10 +399,20 @@ public class MainActivity extends Activity {
 		_textQueue.addText("Backspace: Return to Start Menu", 1, 670, 12, 
 				10, 10, 10, 10, true);
 	}
-	
-	public void stepSimulation() {
-		
-	}
+
+    // This method assumes that there are only SimulationEvents in the eventQueue
+    public void stepSimulation() {
+        // Prepare the simulation engine for a step
+        engine.step();
+        // Put all the simulation events for this step into
+        eventQueue.postSimulationEvents(engine.grid.getEvents());
+        // Simulate events until we run out
+        while (!eventQueue.isEmpty()) {
+            if (engine.simulateOneEvent((SimulationEvent)eventQueue.peekEvent()) == 0) {
+                eventQueue.popEvent();
+            }
+        }
+    }
 	
 	public float getAnimalLocationX(int tileX, int spot) {
 		float locationX = 0.f;
