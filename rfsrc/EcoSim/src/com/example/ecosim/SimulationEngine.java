@@ -83,8 +83,8 @@ class Plant extends Organism implements Comparable<Plant>{
 
 enum AnimalSpecies {
     //      Species water  food   met   spd  entrp   size  aggr       carn    herb
-    BEAR(    "Bear", 2.0f, 9.0f, 0.5f, 0.1f, 0.003f, 10.0f,  0.2f,     true,  false),
-    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.2f, 0.007f,  2.0f, -9999.0f, false,   true);
+    BEAR(    "Bear", 2.0f, 9.0f, 0.2f, 0.2f, 0.003f, 10.0f,  0.2f,     true,  false),
+    RABBIT("Rabbit", 1.0f, 1.0f, 0.05f, 0.4f, 0.007f,  2.0f, -9999.0f, false,   true);
 
     AnimalSpecies(String species, float waterCapacity, float foodCapacity, float metabolicRate,
                   float speed, float agingRate, float size, float aggressiveness,
@@ -152,9 +152,12 @@ class Animal extends Organism implements Comparable<Animal> {
         other.lastAction = "Defended itself against " + this.attributes.species + Integer.toString(this.id);
         // This animal is the aggressor. The aggressor gets a slight bonus in the fight
         float damageToOther = this.health()*(this.size()-other.size()) +
-            (this.evolutionaryFitness-other.evolutionaryFitness) + 0.05f + this.rng.nextFloat();
+            (this.evolutionaryFitness-other.evolutionaryFitness) + 0.1f + this.rng.nextFloat();
         float damageToThis = other.health()*(other.size()-this.size()) +
             (other.evolutionaryFitness-this.evolutionaryFitness) + other.rng.nextFloat();
+
+        // However, the aggressor gives up its ability to move.
+        movement -= 1f;
 
         if (damageToOther > 0) {
             other.injury_health -= damageToOther;
@@ -482,9 +485,10 @@ public class SimulationEngine {
                     if (first.size() > second.size() && first.hunger > 0.0f) {
                         // The first will try to eat the second
                         if (first.evolutionaryFitness + first.rng.nextFloat()*first.size() >
-                            second.evolutionaryFitness + second.rng.nextFloat()*second.speed()) {
+                            second.evolutionaryFitness + second.rng.nextFloat()*second.attributes.speed) {
                             // The second dies
                             second.injury_health -= 10.0f;
+                            second.movement -= 100.0f;
                             // The first eats
                             first.hunger -= second.size();
                             first.lastAction = "Ate " + second.attributes.species + Integer.toString(second.id);
@@ -501,9 +505,10 @@ public class SimulationEngine {
                     if (second.size() > first.size() && second.hunger > 0.0f) {
                         // The second will try to eat the first
                         if (second.evolutionaryFitness + second.rng.nextFloat()*second.size() >
-                            first.evolutionaryFitness + first.rng.nextFloat()*first.speed()) {
+                            first.evolutionaryFitness + first.rng.nextFloat()*first.attributes.speed) {
                             // The first dies. It will be "cleaned up" by the aging step
                             first.injury_health -= 10.0f;
+                            first.movement -= 100.0f;
                             // The second eats
                             second.hunger -= first.size();
                             second.lastAction = "Ate " + first.attributes.species + Integer.toString(first.id);
