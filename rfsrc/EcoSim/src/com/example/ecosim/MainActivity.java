@@ -345,11 +345,11 @@ public class MainActivity extends Activity {
 				for(int i = 0; i < animals.size(); i++) {
 					//Log.v("engine", animals.get(i).toString());
 					tempOrganismInfo.add(new OrganismInfo(animals.get(i).GetSpecies().species + Integer.toString(animals.get(i).id), 
-						Float.toString(animals.get(i).GetHealth()*1000f),  animals.get(i).getLastAction()));
+						Float.toString(animals.get(i).health()*1000f),  animals.get(i).getLastAction()));
 				}
 				
 				for(int i = 0; i < plants.size(); i++) {
-					tempOrganismInfo.add(new OrganismInfo(plants.get(i).attributes.species + Integer.toString(plants.get(i).id), 
+					tempOrganismInfo.add(new OrganismInfo(plants.get(i).attributes.species + Integer.toString(-plants.get(i).id), 
 						"N/A",  plants.get(i).getLastAction()));
 				}
 				
@@ -461,11 +461,11 @@ public class MainActivity extends Activity {
 				for(int i = 0; i < animals.size(); i++) {
 					//Log.v("engine", animals.get(i).toString());
 					tempOrganismInfo.add(new OrganismInfo(animals.get(i).GetSpecies().species + Integer.toString(animals.get(i).id), 
-						Float.toString(animals.get(i).GetHealth()*1000f),  animals.get(i).getLastAction()));
+						Float.toString(animals.get(i).health()*1000f),  animals.get(i).getLastAction()));
 				}
 						
 				for(int i = 0; i < plants.size(); i++) {
-					tempOrganismInfo.add(new OrganismInfo(plants.get(i).attributes.species + Integer.toString(plants.get(i).id), 
+					tempOrganismInfo.add(new OrganismInfo(plants.get(i).attributes.species + Integer.toString(-plants.get(i).id), 
 						"N/A",  plants.get(i).getLastAction()));
 				}
 						

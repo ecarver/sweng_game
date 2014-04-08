@@ -83,8 +83,8 @@ class Plant extends Organism implements Comparable<Plant>{
 
 enum AnimalSpecies {
     //      Species water  food   met   spd  entrp   size  aggr   carn    herb
-    BEAR(    "Bear", 2.0f, 9.0f, 0.5f, 0.03f, 0.03f, 10.0f, 0.2f,  true,  false),
-    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.08f, 0.07f,  1.0f, 0.0f, false,   true);
+    BEAR(    "Bear", 2.0f, 9.0f, 0.5f, 0.1f, 0.03f, 10.0f, 0.2f,  true,  false),
+    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.2f, 0.07f,  1.0f, 0.0f, false,   true);
 
     AnimalSpecies(String species, float waterCapacity, float foodCapacity, float metabolicRate,
                   float speed, float agingRate, float size, float aggressiveness,
@@ -176,7 +176,7 @@ class Animal extends Organism implements Comparable<Animal> {
             injury_health -= thirst - attributes.waterCapacity;
         }
 
-        movement += attributes.speed + 0.02f*evolutionaryFitness + 0.01f*size();
+        movement += attributes.speed + 0.05f*evolutionaryFitness + 0.05f*size();
         age += attributes.agingRate;
 
         if (injury_health <= 0.0f || age > 1.0f) {
@@ -193,7 +193,7 @@ class Animal extends Organism implements Comparable<Animal> {
         return false;
     }
 
-    public float health() { return injury_health; } // Need a formula to calculate this
+    public float health() { return injury_health+(1f-hunger)+(1f-thirst)+size(); } // Need a formula to calculate this
     public float size() {
         // Let's assume that an animal is at its prime in the middle of life,
         // and its size increases steadily for the first half of its life
