@@ -24,7 +24,7 @@ abstract class Organism {
     }
 }
 
-class Plant extends Organism {
+class Plant extends Organism implements Comparable<Plant>{
     public Plant(int x, int y, float maxFood, float growthRate, float food) {
         super(x, y, "Grew a little");
         this.maxFood = maxFood;
@@ -44,6 +44,12 @@ class Plant extends Organism {
     float growthRate;
     float food;
     float maxFood;
+
+    @Override public int compareTo(Plant other) {
+        // All plants are equal in the eyes of the simulation engine
+        return 0;
+    }
+
     
     //***************Begin Properties*******************
     public float GetGrowthRate()
