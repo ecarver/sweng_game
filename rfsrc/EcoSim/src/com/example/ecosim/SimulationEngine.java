@@ -411,7 +411,7 @@ public class SimulationEngine {
                     grid.tiles[i][j] = new Tile(TileEnvironmentType.FOREST);
                 }
                 // Add 0-2 random animals
-                for (int k = rng.nextInt(Tile.ANIMAL_CAPACITY+1); k < Tile.ANIMAL_CAPACITY; k++) {
+                for (int k = rng.nextInt(Tile.ANIMAL_CAPACITY+1); k < Tile.ANIMAL_CAPACITY-1; k++) {
                     if (rng.nextInt(2) == 0) {
                         this.addRandomAnimal(AnimalSpecies.BEAR, i, j);
                     }
