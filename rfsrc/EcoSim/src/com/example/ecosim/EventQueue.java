@@ -5,6 +5,7 @@ package com.example.ecosim;
 
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.PriorityQueue;
 
 public class EventQueue {
@@ -14,11 +15,19 @@ public class EventQueue {
     }
 
     private PriorityQueue<Event> queue;
-    public Event getEvent() {
+    public Event popEvent() {
         return queue.remove();
+    }
+    public Event peekEvent() {
+        return queue.peek();
     }
     public void postEvent(Event event) {
         queue.add(event);
+    }
+    public void postSimulationEvents(List<SimulationEvent> events) {
+        for (SimulationEvent event : events) {
+            queue.add((Event)event);
+        }
     }
     public Boolean isEmpty() { return queue.peek() == null; }
 }
