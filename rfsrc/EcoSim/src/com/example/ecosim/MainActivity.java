@@ -1,5 +1,6 @@
 package com.example.ecosim;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.opengl.GLSurfaceView;
@@ -14,6 +15,8 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.ecosim.StartMenu;
+
 public class MainActivity extends Activity {
 	
 	private OrganismInfo organismData[][][];
@@ -22,6 +25,7 @@ public class MainActivity extends Activity {
 	private EventQueue eventQueue;
 	private GLSurf glSurf;
 	private RenderList _renderList;
+	private StartMenu startMenu;
 	private TextQueue _textQueue;
 	private CurrentTileInfo _tileInfo;
 	private enum StartMenuState { START_SIMULATION_SELECTED, LOAD_SIMULATION_SELECTED, HOW_TO_PLAY_SELECTED, CREDITS_SELECTED };
@@ -51,6 +55,8 @@ public class MainActivity extends Activity {
 		engine = new SimulationEngine(4,4);
 		
 		eventQueue = new EventQueue();
+		
+		startMenu = new StartMenu();
 		
         //_renderList.clearList();
 		glSurf = new GLSurf(this, _renderList, _textQueue);
@@ -223,6 +229,12 @@ public class MainActivity extends Activity {
 			} else if (keyCode == 4) {
 				if(verifyExit > 0) {
 					//TODO: Save
+					try {
+						startMenu.SaveSimulation(engine);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					verifyExit--;
 					_textQueue.removeText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()));
 					_textQueue.removeText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")");
@@ -342,16 +354,18 @@ public class MainActivity extends Activity {
 
 				ArrayList<OrganismInfo>	tempOrganismInfo = new ArrayList<OrganismInfo>();
 				
+				
+				for(int i = 0; i < plants.size(); i++) {
+					tempOrganismInfo.add(new OrganismInfo(plants.get(i).attributes.species + Integer.toString(-plants.get(i).id), 
+						"N/A",  plants.get(i).getLastAction()));
+				}
+				
 				for(int i = 0; i < animals.size(); i++) {
 					//Log.v("engine", animals.get(i).toString());
 					tempOrganismInfo.add(new OrganismInfo(animals.get(i).GetSpecies().species + Integer.toString(animals.get(i).id), 
 						Float.toString(animals.get(i).health()*1000f),  animals.get(i).getLastAction()));
 				}
 				
-				for(int i = 0; i < plants.size(); i++) {
-					tempOrganismInfo.add(new OrganismInfo(plants.get(i).attributes.species + Integer.toString(-plants.get(i).id), 
-						"N/A",  plants.get(i).getLastAction()));
-				}
 				
 				for(int i = 0; i < tempOrganismInfo.size(); i++) {
 					organismData[x][y][i] = tempOrganismInfo.get(i);
@@ -457,16 +471,16 @@ public class MainActivity extends Activity {
 				plants.addAll(engine.grid.tiles[x][y].GetPlants());
 
 				ArrayList<OrganismInfo>	tempOrganismInfo = new ArrayList<OrganismInfo>();
-						
+				
+				for(int i = 0; i < plants.size(); i++) {
+					tempOrganismInfo.add(new OrganismInfo(plants.get(i).attributes.species + Integer.toString(-plants.get(i).id), 
+						"N/A",  plants.get(i).getLastAction()));
+				}
+				
 				for(int i = 0; i < animals.size(); i++) {
 					//Log.v("engine", animals.get(i).toString());
 					tempOrganismInfo.add(new OrganismInfo(animals.get(i).GetSpecies().species + Integer.toString(animals.get(i).id), 
 						Float.toString(animals.get(i).health()*1000f),  animals.get(i).getLastAction()));
-				}
-						
-				for(int i = 0; i < plants.size(); i++) {
-					tempOrganismInfo.add(new OrganismInfo(plants.get(i).attributes.species + Integer.toString(-plants.get(i).id), 
-						"N/A",  plants.get(i).getLastAction()));
 				}
 						
 				for(int i = 0; i < tempOrganismInfo.size(); i++) {

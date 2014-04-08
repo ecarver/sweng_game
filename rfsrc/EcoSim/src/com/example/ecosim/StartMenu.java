@@ -9,7 +9,9 @@ import android.app.Activity;
 public final class StartMenu extends Activity
 {
 	static final String FileName = "SWENG_GAME";
-  
+  public StartMenu() {
+	  
+  }
   public SimulationEngine LoadSimulation() throws IOException
   {
   	String Data; 
