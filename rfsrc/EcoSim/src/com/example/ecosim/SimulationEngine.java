@@ -388,7 +388,7 @@ class Animal extends Organism implements Comparable<Animal> {
         if (this.size() + this.evolutionaryFitness > other.size() + other.evolutionaryFitness) {
             return 1;
         }
-        return 1;
+        return 0;
     }
 }
 
