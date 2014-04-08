@@ -149,7 +149,7 @@ class Tile {
         Set<Plant> localPlants = new TreeSet<Plant>(this.plants);
         for (Animal animal : this.animals) {
             // Herbivores will try to eat the largest plant
-            if (animal.attributes.isHerbivore) {
+            if (animal.attributes.isHerbivore && plants.size() > 0) {
                 Plant biggestPlant = (Plant)localPlants.toArray()[0];
                 for (Plant currentPlant : localPlants) {
                     if (currentPlant.food > biggestPlant.food) {
