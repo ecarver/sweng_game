@@ -1,13 +1,9 @@
 package com.example.ecosim;
 
 class Statistics {
-    public Statistics (int xGridSize, int yGridSize, int waterTiles) {
+    public Statistics (int xGridSize, int yGridSize) {
         this.xGridSize = xGridSize;
         this.yGridSize = yGridSize;
-        
-        this.numTiles = this.xGridSize*this.yGridSize;
-        this.waterTiles = waterTiles;
-        this.landTiles = numTiles - waterTiles;
         
         bearsDiedInTile = new int[xGridSize][yGridSize];
         rabbitsDiedInTile = new int[xGridSize][yGridSize];
@@ -20,11 +16,7 @@ class Statistics {
     
     private int xGridSize;
     private int yGridSize;
-    
-    private int numTiles;
-    private int waterTiles;
-    private int landTiles;
-    
+
     private int bearsDiedInTile[][];
     private int rabbitsDiedInTile[][];
     private int plantsDiedInTile[][];
@@ -146,18 +138,13 @@ class Statistics {
         return deadRabbits;
     }
     
-    public void switchTile(int x, int y, int xMovement, int yMovement, boolean isAnimal, AnimalSpecies species) {
-        if (isAnimal) {
-        	if(species.species.equals("Bear")) {
-                bearsLivingInTile[x][y]--;
-                bearsLivingInTile[x+xMovement][y+yMovement]++;
-        	} else if(species.species.equals("Rabbit")) {
-        		rabbitsLivingInTile[x][y]--;
-                rabbitsLivingInTile[x+xMovement][y+yMovement]++;
-        	} 
-        } else {
-            plantsLivingInTile[x][y]--;
-            plantsLivingInTile[x+xMovement][y+yMovement]++;
-        }
+    public void switchTile(int x, int y, int xMovement, int yMovement, AnimalSpecies species) {
+        if(species.species.equals("Bear")) {
+        	bearsLivingInTile[x][y]--;
+        	bearsLivingInTile[x+xMovement][y+yMovement]++;
+        } else if(species.species.equals("Rabbit")) {
+        	rabbitsLivingInTile[x][y]--;
+            rabbitsLivingInTile[x+xMovement][y+yMovement]++;
+        } 
     }
 }

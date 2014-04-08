@@ -554,8 +554,32 @@ public class MainActivity extends Activity {
 	//
 	public String getStatsText() {
 		//TODO: get stats info
-		String temp = "Put stuff here";
+		Statistics stats = engine.GetStatistics();
 		
+		String totOrgs = Integer.toString(stats.totalOrganisms());
+		String totAnimals = Integer.toString(stats.totalAnimals());
+		String totBears = Integer.toString(stats.liveBears()+stats.deadBears());
+		String liveBears = Integer.toString(stats.liveBears());
+		String deadBears = Integer.toString(stats.deadBears());
+		String totRabbits = Integer.toString(stats.liveRabbits()+stats.deadBears());
+		String liveRabbits = Integer.toString(stats.liveRabbits());
+		String deadRabbits = Integer.toString(stats.deadRabbits());
+		String totPlants = Integer.toString(stats.totalPlants());
+		String livePlants = Integer.toString(stats.livePlants());
+		String deadPlants = Integer.toString(stats.deadPlants());
+		
+		String temp = "Total Organisms: " + totOrgs + "\n" +
+					"Animals: " + totAnimals + "\n" +
+					"Bears: " + totBears + "\n" +
+					"Living Bears: " + liveBears + "\n" +
+					"Dead Bears: " + deadBears + "\n" +
+					"Total Rabbits: " + totRabbits + "\n" +
+					"Living Rabbits: " + liveRabbits + "\n" +
+					"Dead Rabbits: " + deadRabbits + "\n" + 
+					"TotalPlants: " + totPlants + "\n" +
+					"Living Plants: " + livePlants + "\n" +
+					"Dead Plants: " + deadPlants + "\n";
+
 		return temp;
 	}
 
