@@ -364,6 +364,7 @@ public class MainActivity extends Activity {
 		}
 		
 		_tileInfo.setLocation(tempx,tempy);
+		
 		// TODO: Load simulation from save
 		//_renderList.clearList();
 		_textQueue.removeText("Up Arrow: Move Up | Down Arrow: Move Down | Enter Key: Select");
@@ -441,8 +442,8 @@ public class MainActivity extends Activity {
 		}
 		
 		switch(spot) {
-			case 0: locationY = locationY - 64; break;
-			case 1: locationY = locationY - 64; break;
+			case 0: locationY = locationY + 64; break;
+			case 1: locationY = locationY + 64; break;
 			case 2: break;
 			case 3: break;		
 		}
