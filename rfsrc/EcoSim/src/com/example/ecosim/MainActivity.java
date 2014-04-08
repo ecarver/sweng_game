@@ -4,6 +4,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -11,95 +12,10 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-class CurrentTileInfo {
-	private int _tileX;
-	private int _tileY;
-	
-	public CurrentTileInfo(int x, int y) {
-		_tileX = x;
-		_tileY = y;
-	}
-	
-	public int getTileX() {
-		return _tileX;
-	}
-	
-	public int getTileY() {
-		return _tileY;
-	}
-	
-	public String getTileArrayName() {
-		
-		//x = index % Width;
-
-		//y = (index - x) / Width;
-		
-		return "tile" + Integer.toString((_tileY*4) + _tileX);
-	}
-	
-	public float getXLocation() {
-		switch (_tileX) {
-			case 0:  return 575f;
-			case 1:  return 703f;
-			case 2:  return 831f;
-			case 3:  return 959f;
-		}
-		
-		return -1f;
-	}
-	
-	public float getYLocation() {
-		switch (_tileY) {
-			case 0:  return 488f;
-			case 1:  return 368f;
-			case 2:  return 248f;
-			case 3:  return 128f;
-		}
-		
-		return -1f;
-	}
-	
-	public void moveUp() {
-		switch (_tileY) {
-			case 0:  _tileY = 0; break;
-			case 1:  _tileY = 0; break;
-			case 2:  _tileY = 1; break;
-			case 3:  _tileY = 2; break;
-		}		
-	}
-	
-	public void moveDown() {
-		switch (_tileY) {
-			case 0:  _tileY = 1; break;
-			case 1:  _tileY = 2; break;
-			case 2:  _tileY = 3; break;
-			case 3:  _tileY = 3; break;
-		}		
-	}
-	
-	public void moveLeft() {
-		switch (_tileX) {
-			case 0:  _tileX = 0; break;
-			case 1:  _tileX = 0; break;
-			case 2:  _tileX = 1; break;
-			case 3:  _tileX = 2; break;
-		}		
-	}
-	
-	public void moveRight() {
-		switch (_tileX) {
-			case 0:  _tileX = 1; break;
-			case 1:  _tileX= 2; break;
-			case 2:  _tileX = 3; break;
-			case 3:  _tileX = 3; break;
-		}		
-	}
-	
-}
 public class MainActivity extends Activity {
 	
 	// Our OpenGL Surfaceview
-	
+	private SimulationEngine engine;
 	private GLSurfaceView glSurfaceView;
 	private GLSurf glSurf;
 	private RenderList _renderList;
@@ -130,6 +46,8 @@ public class MainActivity extends Activity {
 		
 		_renderList = new RenderList();
 
+		engine = new SimulationEngine(4,4);
+		
         //_renderList.clearList();
 		glSurf = new GLSurf(this, _renderList, _textQueue);
         glSurfaceView = glSurf;
@@ -281,8 +199,6 @@ public class MainActivity extends Activity {
 				
 				//TODO: Step here
 			} else if (keyCode == 62) {
-				Toast.makeText(this.getApplicationContext(), "Menu here", 
-						Toast.LENGTH_LONG).show();
 				_renderList.setScreen(_renderList.STAT_SCREEN);
 				_textQueue.removeText("Name: bear1\nLife Remaining: 55\nLast Action: Fight\n\nName: bear2\nLife Remaining: 55\nLast Action: Fight\n\n"
 						+ "Name: bear3\nLife Remaining: 55\nLast Action: Fight\n\nName: bear4\nLife Remaining: 55\nLast Action: Fight\n\n");
@@ -305,11 +221,14 @@ public class MainActivity extends Activity {
 							Toast.LENGTH_LONG).show();
 					verifyExit++;
 				}
-			} else if(_renderList.getScreen() == _renderList.STAT_SCREEN) {
-				if(keyCode == 67) {
-					_textQueue.removeText("Backspace: Return to Start Menu");
-					_textQueue.removeText("Some text");
-				}
+			}
+		} else if(_renderList.getScreen() == _renderList.STAT_SCREEN) {
+			if(keyCode == 67) {
+				_textQueue.removeText("Backspace: Return to Start Menu");
+				_textQueue.removeText("Some text");
+				_renderList.deleteRenderLink("background");
+				_renderList.setScreen(_renderList.ECO_MAP);
+				initStartSimulation();
 			}
 		}
 		glSurf.KeyDown(keyCode,event);
@@ -362,9 +281,37 @@ public class MainActivity extends Activity {
 	}
 	
 	public void initStartSimulation() {
-		// TODO: Load simulation from save
+		int tempx = _tileInfo.getTileX();
+		int tempy = _tileInfo.getTileY();
+		engine = new SimulationEngine(4,4);
 		_renderList.clearList();
+		//Log.v("engine", Integer.toString(engine.grid.xSize));
+		engine.genRandomGrid();
+		for(int x = 0; x < engine.grid.xSize; x++) {
+			for(int y = 0; y < engine.grid.ySize; y++) {
+				//Log.v("engine", "x: " + Integer.toString(x) + "y: " + Integer.toString(y));
+				//Log.v("engine", engine.grid.tiles[x][y].GetEnvironmentType().toString());
+				//Log.v("engine", Integer.toString(engine.grid.tiles[x][y].ANIMAL_CAPACITY));
+				//Log.v("engine", "YOLO" +TileEnvironmentType.DESERT.toString());
+				Log.v("engine", engine.grid.tiles[x][y].GetEnvironmentTypeToString());
+				if(engine.grid.tiles[x][y].GetEnvironmentTypeToString().equals("DESERT")) {
+					Log.v("engine", "here");
+					_tileInfo.setLocation(x, y);
+					_renderList.addRenderLink(new RenderLink("tile" + Integer.toString((y*4) + x), "grasstile", 1, 
+						_tileInfo.getXLocation(), _tileInfo.getYLocation()));
+				} else if(engine.grid.tiles[x][y].GetEnvironmentTypeToString().equals("FOREST")) {
+					_tileInfo.setLocation(x, y);
+					_renderList.addRenderLink(new RenderLink("tile" + Integer.toString((y*4) + x), "watertile", 1, 
+						_tileInfo.getXLocation(), _tileInfo.getYLocation()));
+				}
+			}
+		}
+		
+		_tileInfo.setLocation(tempx,tempy);
+		// TODO: Load simulation from save
+		//_renderList.clearList();
 		_textQueue.removeText("Up Arrow: Move Up | Down Arrow: Move Down | Enter Key: Select");
+		/*
 		_renderList.addRenderLink(new RenderLink("sidemenu", "sidemenu", 1, -9.0f, -1.1f));
 		_renderList.addRenderLink(new RenderLink("tile0", "watertile", 1, 575f, 488f));
 		_renderList.addRenderLink(new RenderLink("tile1", "grasstile", 1, 703f, 488f));
@@ -382,7 +329,7 @@ public class MainActivity extends Activity {
 		_renderList.addRenderLink(new RenderLink("tile13", "grasstile", 1, 703f, 128f));
 		_renderList.addRenderLink(new RenderLink("tile14", "grasstile", 1, 831f, 128f));
 		_renderList.addRenderLink(new RenderLink("tile15", "grasstile", 1, 959f, 128f));
-		
+		*/
 		//fake code
 		_renderList.addRenderLink(new RenderLink("rabbit1", "rabbit", 2, 959f, 128f));
 		_renderList.addRenderLink(new RenderLink("rabbit2", "rabbit", 2, 959f, 192f));
@@ -393,7 +340,7 @@ public class MainActivity extends Activity {
 				+ "Name: bear3\nLife Remaining: 55\nLast Action: Fight\n\nName: bear4\nLife Remaining: 55\nLast Action: Fight\n\n", 0, 0, 18, 
 				10, 10, 10, 10, false);
 		//Actual code
-		_renderList.addRenderLink(new RenderLink("tileselect", "tileselect", 3, 575f, 488f));
+		_renderList.addRenderLink(new RenderLink("tileselect", "tileselect", 3, _tileInfo.getXLocation(), _tileInfo.getYLocation()));
 		_textQueue.addText("Directional Arrows: Move | Enter Key: Step | Space Key: Stats | Escape Key: Save and Exit", 410, 670, 10, 
 				10, 10, 10, 10, false);
 		//_textQueue.addText("Tile(0,0)", 410, 10, 11, 
@@ -446,4 +393,95 @@ public class MainActivity extends Activity {
 		return locationY;	
 	}
 
+}
+
+class CurrentTileInfo {
+	private int _tileX;
+	private int _tileY;
+	
+	public CurrentTileInfo(int x, int y) {
+		_tileX = x;
+		_tileY = y;
+	}
+	
+	public int getTileX() {
+		return _tileX;
+	}
+	
+	public int getTileY() {
+		return _tileY;
+	}
+	
+	public String getTileArrayName() {
+		
+		//x = index % Width;
+
+		//y = (index - x) / Width;
+		
+		return "tile" + Integer.toString((_tileY*4) + _tileX);
+	}
+	
+	public float getXLocation() {
+		switch (_tileX) {
+			case 0:  return 575f;
+			case 1:  return 703f;
+			case 2:  return 831f;
+			case 3:  return 959f;
+		}
+		
+		return -1f;
+	}
+	
+	public float getYLocation() {
+		switch (_tileY) {
+			case 0:  return 488f;
+			case 1:  return 368f;
+			case 2:  return 248f;
+			case 3:  return 128f;
+		}
+		
+		return -1f;
+	}
+	
+	public void moveUp() {
+		switch (_tileY) {
+			case 0:  _tileY = 0; break;
+			case 1:  _tileY = 0; break;
+			case 2:  _tileY = 1; break;
+			case 3:  _tileY = 2; break;
+		}		
+	}
+	
+	public void moveDown() {
+		switch (_tileY) {
+			case 0:  _tileY = 1; break;
+			case 1:  _tileY = 2; break;
+			case 2:  _tileY = 3; break;
+			case 3:  _tileY = 3; break;
+		}		
+	}
+	
+	public void moveLeft() {
+		switch (_tileX) {
+			case 0:  _tileX = 0; break;
+			case 1:  _tileX = 0; break;
+			case 2:  _tileX = 1; break;
+			case 3:  _tileX = 2; break;
+		}		
+	}
+	
+	public void moveRight() {
+		switch (_tileX) {
+			case 0:  _tileX = 1; break;
+			case 1:  _tileX= 2; break;
+			case 2:  _tileX = 3; break;
+			case 3:  _tileX = 3; break;
+		}		
+	}
+	
+	public void setLocation(int x, int y) {
+		_tileX = x;
+		_tileY = y;
+	}
+	
 }

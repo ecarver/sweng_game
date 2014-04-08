@@ -319,8 +319,8 @@ public class SimulationEngine {
 
     // Generates a random grid. Must be updated if more animal, plant, or tile types are added
     public void genRandomGrid() {
-        for (int i = 1; i < grid.xSize; i++) {
-            for (int j = 1; j < grid.ySize; j++) {
+        for (int i = 0; i < grid.xSize; i++) {
+            for (int j = 0; j < grid.ySize; j++) {
                 // Generate a random tile environment type
                 if (rng.nextInt(2) == 0) {
                     grid.tiles[i][j] = new Tile(TileEnvironmentType.DESERT);
