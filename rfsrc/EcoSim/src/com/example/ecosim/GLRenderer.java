@@ -48,8 +48,6 @@ public class GLRenderer implements Renderer {
 	RenderList _renderList;
 	TextQueue _textQueue;
 	
-	private EventQueue eventQueue;
-	
 	public GLRenderer(Context c, RenderList renderList, TextQueue textQueue)
 	{
 		mContext = c;
@@ -57,8 +55,6 @@ public class GLRenderer implements Renderer {
 		_renderList = renderList;
 		_textQueue = textQueue;
 		//sprite = new Sprite();
-		
-		eventQueue = new EventQueue();
 	}
 	
 	public void onPause()
@@ -330,6 +326,13 @@ public class GLRenderer implements Renderer {
 				y_end_pos = 0.99824317121919f;
 			}
 			
+			else if(loop.getFilename().equals("background")) {
+				x_start_pos = 0;
+				x_end_pos = 0.98488664987406f;
+				y_start_pos = 0.00199866755496f;
+				y_end_pos = 0.48434377081945f;
+			}
+			
 			//397 1501
 			uvs[(i*8) + 0] = x_start_pos;
 			uvs[(i*8) + 1] = y_start_pos;
@@ -361,7 +364,7 @@ public class GLRenderer implements Renderer {
 		if(_renderList.getScreen() == _renderList.START_MENU || _renderList.getScreen() == _renderList.CREDITS_SCREEN ||
 				_renderList.getScreen() == _renderList.HOW_TO_PLAY_SCREEN) {
 			id = mContext.getResources().getIdentifier("drawable/ecosimtextureatlas", null, mContext.getPackageName());
-		} else if(_renderList.getScreen() == _renderList.ECO_MAP) {
+		} else if(_renderList.getScreen() == _renderList.ECO_MAP || _renderList.getScreen() == _renderList.STAT_SCREEN) {
 			id = mContext.getResources().getIdentifier("drawable/simulationatlas", null, mContext.getPackageName());
 		}
 		
@@ -503,6 +506,13 @@ public class GLRenderer implements Renderer {
 				scale_y = 64.0f;
 			}
 
+			else if(loop.getFilename().equals("background")) {
+				offset_x = (int)loop.getPositionX();
+				offset_y = (int)loop.getPositionY();
+				scale_x = 1310.0f;
+				scale_y = 720.0f;
+			}
+			
 			// Create the 2D parts of our 3D vertices, others are default 0.0f
 			vertices[(i*12) + 0] = offset_x;
 			vertices[(i*12) + 1] = offset_y + (scale_y);
@@ -554,234 +564,9 @@ public class GLRenderer implements Renderer {
 		drawListBuffer.position(0);
 	}
 	
-	private Screen screen;
-    private StartOption startOption;
-    private int xTile;
-    private int yTile;
-    private final int xTileMax = 4;
-    private final int yTileMax = 4;
-    Boolean simMenuOpen;
-	
-    enum Screen {
-        START_MENU,
-        GAME_MENU,
-        SIMULATION
-    };
-
-    enum StartOption {
-        NEW_SIM,
-        LOAD_SIM,
-        CREDITS,
-        GUIDE
-    };
-	
 	public void keyEvent(int keyCode) {
-	    boolean handled = false;
+		Log.i("KeyCode", "index=" + keyCode);
 
-        //Handle the input
-        switch(keyCode){
-        case OuyaController.BUTTON_O:
-            if (this.screen == Screen.SIMULATION) { // Back
-            	this.screen = Screen.START_MENU;
-            }
-            else if (this.screen == Screen.GAME_MENU) { // Back
-            	this.screen = Screen.SIMULATION;
-            }
-            handled = true;
-            break;
-        case OuyaController.BUTTON_U:
-            if (this.screen == Screen.SIMULATION) { // Game Menu
-            	this.screen = Screen.GAME_MENU;
-            }
-            else if (this.screen == Screen.GAME_MENU) { // Exit Menu
-            	this.screen = Screen.SIMULATION;
-            }
-            handled = true;
-            break;
-        case OuyaController.BUTTON_Y:
-            if (this.screen == Screen.SIMULATION) { // Step
-                StepSimulation();
-            }
-            handled = true;
-            break;
-        case OuyaController.BUTTON_A:
-            if (this.screen == Screen.START_MENU) { // Select
-                if (startOption == StartOption.LOAD_SIM) {
-                    LoadSimulation();
-                }
-                else if (startOption == StartOption.NEW_SIM) {
-                    NewSimulation();
-                }
-            }
-            else if (this.screen == Screen.SIMULATION) { // Select
-                simMenuOpen = !simMenuOpen;
-            }
-            else if (this.screen == Screen.GAME_MENU) { // Select
-            	this.screen = Screen.SIMULATION;
-            }
-            handled = true;
-            break;
-        case OuyaController.BUTTON_DPAD_UP:
-            if (this.screen == Screen.START_MENU) {
-                if (startOption == StartOption.NEW_SIM)
-                    startOption = StartOption.GUIDE;
-                else if (startOption == StartOption.LOAD_SIM)
-                    startOption = StartOption.NEW_SIM;
-                else if (startOption == StartOption.CREDITS)
-                	startOption = StartOption.LOAD_SIM;
-                else
-                	startOption = StartOption.CREDITS;
-            }
-            else if (this.screen == Screen.SIMULATION) {
-                if (yTile > 1) yTile--;
-            }
-            handled = true;
-            break;
-        case OuyaController.BUTTON_DPAD_DOWN:
-            if (this.screen == Screen.START_MENU) {
-                if (startOption == StartOption.NEW_SIM)
-                    startOption = StartOption.LOAD_SIM;
-                else if (startOption == StartOption.LOAD_SIM)
-                    startOption = StartOption.CREDITS;
-                else if (startOption == StartOption.CREDITS)
-                	startOption = StartOption.GUIDE;
-                else
-                	startOption = StartOption.NEW_SIM;
-            }
-            else if (this.screen == Screen.SIMULATION) {
-                if (yTile < yTileMax) yTile++;
-            }
-            handled = true;
-            break;
-        case OuyaController.BUTTON_DPAD_LEFT:
-            if (this.screen == Screen.SIMULATION) {
-                if (xTile > 1) xTile--;
-            }
-            handled = true;
-            break;
-        case OuyaController.BUTTON_DPAD_RIGHT:
-            if (this.screen == Screen.SIMULATION) {
-                if (xTile < xTileMax) xTile++;
-            }
-            handled = true;
-            break;
-        }
-        return handled || super.onKeyDown(keyCode, event);
-	}
-	
-    private void StepSimulation() {
-        engine.step();
-        while (!eventQueue.isEmpty()) {
-        	Event event = eventQueue.getEvent();
-        	if (event instanceof SimulationEvent) {
-        		if (!simulationEngine.simulateOneEvent((SimulationEvent)event)) {
-        			eventQueue.popEvent();
-        		}
-        	}
-        }
-    }
-
-    private void LoadSimulation() {
-        engine = startMenu.LoadSimulation();
-    }
-
-    private void SaveSimulation() {
-        startMenu.SaveSimulation();
-    }
-
-    private void NewSimulation() {
-        engine = new SimulationEngine();
-    }
-	
-	class Sprite
-	{
-		float angle;
-		float scale;
-		RectF base;
-		PointF translation;
-		
-		public Sprite()
-		{
-			// Initialise our intital size around the 0,0 point
-			base = new RectF(-50f*ssu,50f*ssu, 50f*ssu, -50f*ssu);
-			
-			// Initial translation
-			translation = new PointF(50f*ssu,50f*ssu);
-			
-			// We start with our inital size
-			scale = 1f;
-			
-			// We start in our inital angle
-			angle = 0f;
-		}
-		
-		
-		public void translate(float deltax, float deltay)
-		{
-			// Update our location.
-			translation.x += deltax;
-			translation.y += deltay;
-		}
-		
-		public void scale(float deltas)
-		{
-			scale += deltas;
-		}
-		
-		public void rotate(float deltaa)
-		{
-			angle += deltaa;
-		}
-		
-		public float[] getTransformedVertices()
-		{
-			// Start with scaling
-			float x1 = base.left * scale;
-			float x2 = base.right * scale;
-			float y1 = base.bottom * scale;
-			float y2 = base.top * scale;
-			
-			// We now detach from our Rect because when rotating, 
-			// we need the seperate points, so we do so in opengl order
-			PointF one = new PointF(x1, y2);
-			PointF two = new PointF(x1, y1);
-			PointF three = new PointF(x2, y1);
-			PointF four = new PointF(x2, y2);
-			
-			// We create the sin and cos function once, 
-			// so we do not have calculate them each time.
-			float s = (float) Math.sin(angle);
-			float c = (float) Math.cos(angle);
-			
-			// Then we rotate each point
-			one.x = x1 * c - y2 * s;
-			one.y = x1 * s + y2 * c;
-			two.x = x1 * c - y1 * s;
-			two.y = x1 * s + y1 * c;
-			three.x = x2 * c - y1 * s;
-			three.y = x2 * s + y1 * c;
-			four.x = x2 * c - y2 * s;
-			four.y = x2 * s + y2 * c;
-			
-			// Finally we translate the sprite to its correct position.
-			one.x += translation.x;
-			one.y += translation.y;
-			two.x += translation.x;
-			two.y += translation.y;
-			three.x += translation.x;
-			three.y += translation.y;
-			four.x += translation.x;
-			four.y += translation.y;
-			
-			// We now return our float array of vertices.
-			return new float[]
-	        {
-					one.x, one.y, 0.0f,
-	       			two.x, two.y, 0.0f,
-	       			three.x, three.y, 0.0f,
-	       			four.x, four.y, 0.0f,
-	        };
-		}
 	}
 }
 
