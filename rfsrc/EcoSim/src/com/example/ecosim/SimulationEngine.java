@@ -82,9 +82,9 @@ class Plant extends Organism implements Comparable<Plant>{
 }
 
 enum AnimalSpecies {
-    //      Species water  food   met   spd  entrp   size  aggr   carn    herb
-    BEAR(    "Bear", 2.0f, 9.0f, 0.5f, 0.1f, 0.03f, 10.0f, 0.2f,  true,  false),
-    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.2f, 0.07f,  1.0f, 0.0f, false,   true);
+    //      Species water  food   met   spd  entrp   size  aggr       carn    herb
+    BEAR(    "Bear", 2.0f, 9.0f, 0.5f, 0.1f, 0.03f, 10.0f,  0.2f,     true,  false),
+    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.2f, 0.07f,  1.0f, -9999.0f, false,   true);
 
     AnimalSpecies(String species, float waterCapacity, float foodCapacity, float metabolicRate,
                   float speed, float agingRate, float size, float aggressiveness,
@@ -148,10 +148,8 @@ class Animal extends Organism implements Comparable<Animal> {
     Random rng;
 
     void fight(Animal other) {
-        this.lastAction = "Started a fight";
-        if (other.lastAction != "Started a fight") {
-            other.lastAction = "Defended itself";
-        }
+        this.lastAction = "Attacked " + other.attributes.species + Integer.toString(other.id);
+        other.lastAction = "Defended itself against " + this.attributes.species + Integer.toString(this.id);
         // This animal is the aggressor. The aggressor gets a slight bonus in the fight
         float damageToOther = this.health()*(this.size()-other.size())*
             (this.evolutionaryFitness-other.evolutionaryFitness) + 0.05f;
