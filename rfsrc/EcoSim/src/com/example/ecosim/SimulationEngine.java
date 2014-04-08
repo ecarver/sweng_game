@@ -60,6 +60,9 @@ class Plant extends Organism implements Comparable<Plant>{
 
     @Override public int compareTo(Plant other) {
         // All plants are unique in the eyes of the simulation engine
+        if (this.id == other.id) {
+            return 0;
+        }
         return 1;
     }
 
@@ -382,13 +385,16 @@ class Animal extends Organism implements Comparable<Animal> {
 
     // This method decides who eats/drinks first
     @Override public int compareTo(Animal other) {
+        if (this.id == other.id) {
+            return 0;
+        }
         if (this.size() + this.evolutionaryFitness < other.size() + other.evolutionaryFitness) {
             return -1;
         }
         if (this.size() + this.evolutionaryFitness > other.size() + other.evolutionaryFitness) {
             return 1;
         }
-        return 0;
+        return 1;
     }
 }
 
