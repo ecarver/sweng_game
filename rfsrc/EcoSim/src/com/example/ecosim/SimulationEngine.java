@@ -59,8 +59,8 @@ class Plant extends Organism implements Comparable<Plant>{
     PlantSpecies attributes;
 
     @Override public int compareTo(Plant other) {
-        // All plants are equal in the eyes of the simulation engine
-        return 0;
+        // All plants are unique in the eyes of the simulation engine
+        return 1;
     }
 
     //***************Begin Properties*******************
@@ -388,7 +388,7 @@ class Animal extends Organism implements Comparable<Animal> {
         if (this.size() + this.evolutionaryFitness > other.size() + other.evolutionaryFitness) {
             return 1;
         }
-        return 0;
+        return 1;
     }
 }
 
@@ -415,7 +415,7 @@ public class SimulationEngine {
                 }
                 // Add 0-2 random animals
                 for (int k = rng.nextInt(Tile.ANIMAL_CAPACITY+1); k < Tile.ANIMAL_CAPACITY; k++) {
-                    if (rng.nextInt(2) == 0) {
+                    if (rng.nextInt(3) == 0) {
                         this.addRandomAnimal(AnimalSpecies.BEAR, i, j);
                     }
                     else {
