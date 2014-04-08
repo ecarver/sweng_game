@@ -113,6 +113,7 @@ public class MainActivity extends Activity {
             "Step the simulation forward by pressing \"Step.\"\n" +
             "Move the cursor over a tile to show information on its occupants.\n";
     private String sideMenuInfo = "";
+    private int verifyExit;
 	
 	@SuppressLint({ "InlinedApi", "NewApi" }) @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +141,7 @@ public class MainActivity extends Activity {
         RelativeLayout.LayoutParams glParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         layout.addView(glSurfaceView, glParams);
         // 
+        verifyExit = 0;
         
         _textQueue = new TextQueue(findViewById(R.id.gamelayout));
         _textQueue.addText("BETA", 1100, 10, 20, 
@@ -281,8 +283,33 @@ public class MainActivity extends Activity {
 			} else if (keyCode == 62) {
 				Toast.makeText(this.getApplicationContext(), "Menu here", 
 						Toast.LENGTH_LONG).show();
+				_renderList.setScreen(_renderList.STAT_SCREEN);
+				_textQueue.removeText("Name: bear1\nLife Remaining: 55\nLast Action: Fight\n\nName: bear2\nLife Remaining: 55\nLast Action: Fight\n\n"
+						+ "Name: bear3\nLife Remaining: 55\nLast Action: Fight\n\nName: bear4\nLife Remaining: 55\nLast Action: Fight\n\n");
+					_textQueue.removeText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")");
+					_textQueue.removeText("Directional Arrows: Move | Enter Key: Step | Space Key: Stats | Escape Key: Save and Exit");
+				initStatsMenu();
 					
 					//TODO: Step here			
+			} else if (keyCode == 4) {
+				if(verifyExit > 0) {
+					//TODO: Save
+					_textQueue.removeText("Name: bear1\nLife Remaining: 55\nLast Action: Fight\n\nName: bear2\nLife Remaining: 55\nLast Action: Fight\n\n"
+						+ "Name: bear3\nLife Remaining: 55\nLast Action: Fight\n\nName: bear4\nLife Remaining: 55\nLast Action: Fight\n\n");
+					_textQueue.removeText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")");
+					_textQueue.removeText("Directional Arrows: Move | Enter Key: Step | Space Key: Stats | Escape Key: Save and Exit");
+					_renderList.setScreen(_renderList.START_MENU);
+					initStartMenu();
+				} else {
+					Toast.makeText(this.getApplicationContext(), "Press escape one more time to save and exit.", 
+							Toast.LENGTH_LONG).show();
+					verifyExit++;
+				}
+			} else if(_renderList.getScreen() == _renderList.STAT_SCREEN) {
+				if(keyCode == 67) {
+					_textQueue.removeText("Backspace: Return to Start Menu");
+					_textQueue.removeText("Some text");
+				}
 			}
 		}
 		glSurf.KeyDown(keyCode,event);
@@ -369,8 +396,16 @@ public class MainActivity extends Activity {
 		_renderList.addRenderLink(new RenderLink("tileselect", "tileselect", 3, 575f, 488f));
 		_textQueue.addText("Directional Arrows: Move | Enter Key: Step | Space Key: Stats | Escape Key: Save and Exit", 410, 670, 10, 
 				10, 10, 10, 10, false);
-		_textQueue.addText("Tile(0,0)", 410, 10, 11, 
+		//_textQueue.addText("Tile(0,0)", 410, 10, 11, 
+		//		10, 10, 10, 10, false);
+	}
+	
+	public void initStatsMenu() {
+		_renderList.addRenderLink(new RenderLink("background", "background", 10, -30.f, 0));
+		_textQueue.addText("Some text", 0, 0, 18, 
 				10, 10, 10, 10, false);
+		_textQueue.addText("Backspace: Return to Start Menu", 1, 670, 12, 
+				10, 10, 10, 10, true);
 	}
 	
 	public float getAnimalLocationX(int tileX, int spot) {
