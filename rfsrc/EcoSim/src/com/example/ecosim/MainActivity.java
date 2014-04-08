@@ -1,5 +1,7 @@
 package com.example.ecosim;
 
+import java.util.ArrayList;
+
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 	
 	// Our OpenGL Surfaceview
+	private OrganismInfo organismData[][][];
 	private SimulationEngine engine;
 	private GLSurfaceView glSurfaceView;
 	private GLSurf glSurf;
@@ -284,6 +287,18 @@ public class MainActivity extends Activity {
 		int tempx = _tileInfo.getTileX();
 		int tempy = _tileInfo.getTileY();
 		engine = new SimulationEngine(4,4);
+		
+		//TODO: Change hardcode
+		organismData = new OrganismInfo[engine.grid.xSize][engine.grid.ySize][4];
+		
+		for(int x = 0; x < engine.grid.xSize; x++) {
+			for(int y = 0; y < engine.grid.ySize; y--) {
+				for(int z = 0; z < 4; z++)  {
+					organismData[x][y][z] = new OrganismInfo("null","null","null");
+				}
+			}
+		}
+		
 		_renderList.clearList();
 		//Log.v("engine", Integer.toString(engine.grid.xSize));
 		engine.genRandomGrid();
@@ -304,6 +319,30 @@ public class MainActivity extends Activity {
 					_renderList.addRenderLink(new RenderLink("tile" + Integer.toString((y*4) + x), "watertile", 1, 
 						_tileInfo.getXLocation(), _tileInfo.getYLocation()));
 				}
+				
+				ArrayList<Animal> animals = new ArrayList<Animal>();
+				ArrayList<Plant> plants = new ArrayList<Plant>();
+				
+				animals.addAll(engine.grid.tiles[x][y].GetAnimals());
+				
+				plants.addAll(engine.grid.tiles[x][y].GetPlants());
+
+				ArrayList<OrganismInfo>	tempOrganismInfo = new ArrayList<OrganismInfo>();
+				
+				for(int i = 0; i < animals.size(); i++) {
+					tempOrganismInfo.add(new OrganismInfo(animals.get(i).species + Integer.toString(animals.get(i).id), 
+						Float.toString(animals.get(i).GetHealth()),  animals.get(i).getLastAction()));
+				}
+				
+				for(int i = 0; i < plants.size(); i++) {
+					tempOrganismInfo.add(new OrganismInfo(plants.get(i).species + Integer.toString(plants.get(i).id), 
+						"N/A",  plants.get(i).getLastAction()));
+				}
+				
+				for(int i = 0; i < tempOrganismInfo.size(); i++) {
+					organismData[x][y][i] = tempOrganismInfo.get(i);
+				}
+
 			}
 		}
 		
@@ -484,4 +523,28 @@ class CurrentTileInfo {
 		_tileY = y;
 	}
 	
+}
+
+class OrganismInfo {
+	private String _name;
+	private String _health;
+	private String _lastAction;
+	
+	public OrganismInfo(String name, String health, String lastAction) {
+		_name = name;
+		_health = health;
+		_lastAction = lastAction;
+	}
+	
+	public String getName() {
+		return _name;
+	}
+	
+	public String getHealth() {
+		return _health;
+	}
+	
+	public String getLastAction() {
+		return _lastAction;
+	}
 }
