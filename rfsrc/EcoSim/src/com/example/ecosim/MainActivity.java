@@ -399,6 +399,10 @@ public class MainActivity extends Activity {
 				10, 10, 10, 10, true);
 	}
 	
+	public void stepSimulation() {
+		
+	}
+	
 	public float getAnimalLocationX(int tileX, int spot) {
 		float locationX = 0.f;
 		switch (tileX) {
