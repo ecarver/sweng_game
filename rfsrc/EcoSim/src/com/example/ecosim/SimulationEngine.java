@@ -151,10 +151,10 @@ class Animal extends Organism implements Comparable<Animal> {
         this.lastAction = "Attacked " + other.attributes.species + Integer.toString(other.id);
         other.lastAction = "Defended itself against " + this.attributes.species + Integer.toString(this.id);
         // This animal is the aggressor. The aggressor gets a slight bonus in the fight
-        float damageToOther = this.health()*(this.size()-other.size())*
-            (this.evolutionaryFitness-other.evolutionaryFitness) + 0.05f;
-        float damageToThis = other.health()*(other.size()-this.size())*
-            (other.evolutionaryFitness-this.evolutionaryFitness);
+        float damageToOther = this.health()*(this.size()-other.size()) +
+            (this.evolutionaryFitness-other.evolutionaryFitness) + 0.05f + this.rng.nextFloat();
+        float damageToThis = other.health()*(other.size()-this.size()) +
+            (other.evolutionaryFitness-this.evolutionaryFitness) + other.rng.nextFloat();
 
         if (damageToOther > 0) {
             other.injury_health -= damageToOther;
