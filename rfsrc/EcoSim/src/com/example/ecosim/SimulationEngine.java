@@ -8,7 +8,7 @@ import java.util.Random;
 
 
 abstract class Organism {
-    public Organism(int x, int y, String action) {
+    public Organism(int x, int y, String action, int id) {
         this.location = new Location(x, y);
         this.lastAction = action;
     }
@@ -34,15 +34,15 @@ enum PlantSpecies {
 }
 
 class Plant extends Organism implements Comparable<Plant>{
-    public Plant(int x, int y, float maxFood, float growthRate, float food) {
-        super(x, y, "Grew a little");
+    public Plant(int x, int y, float maxFood, float growthRate, float food, int id) {
+        super(x, y, "Grew a little", id);
         this.maxFood = maxFood;
         this.growthRate = growthRate;
         this.food = food;
         this.attributes = PlantSpecies.GENERIC;
     }
-    public Plant(int x, int y, float maxFood, float growthRate) {
-        this(x, y, maxFood, growthRate, 0.0f);
+    public Plant(int x, int y, float maxFood, float growthRate, int id) {
+        this(x, y, maxFood, growthRate, 0.0f, id);
     }
     Boolean increase_age() {
         this.food += this.growthRate;
@@ -112,8 +112,8 @@ enum AnimalSpecies {
 }
 
 class Animal extends Organism implements Comparable<Animal> {
-    public Animal(int x, int y, AnimalSpecies attributes, float evolutionaryFitness, Boolean isMale) {
-        super(x, y, "Did nothing");
+    public Animal(int x, int y, AnimalSpecies attributes, float evolutionaryFitness, Boolean isMale, int id) {
+        super(x, y, "Did nothing", id);
         this.evolutionaryFitness = evolutionaryFitness;
         this.isMale = isMale;
         this.injury_health = 1.0f;
@@ -558,28 +558,28 @@ public class SimulationEngine {
 
     // This method adds an organism of the specified species to a random location
     public void addAnimal(AnimalSpecies species) {
-        organisms.put(animalIdCount++, new Animal(this.rng.nextInt(grid.xSize)+1,
-                                                  this.rng.nextInt(grid.ySize)+1, species,
-                                                  this.rng.nextFloat(), true));
+        organisms.put(animalIdCount, new Animal(this.rng.nextInt(grid.xSize)+1,
+                                                this.rng.nextInt(grid.ySize)+1, species,
+                                                this.rng.nextFloat(), true, animalIdCount++));
         Organism org = organisms.get(animalIdCount-1);
         //stats.recordLife(org.location.x(), org.location.y(), true, ((Animal)org).GetSpecies());
     }
     public void addPlant() {
-        organisms.put(plantIdCount--, new Plant(this.rng.nextInt(grid.xSize)+1,
-                                                this.rng.nextInt(grid.ySize)+1,
-                                                this.rng.nextFloat()*2+0.5f,
-                                                this.rng.nextFloat()/2));
+        organisms.put(plantIdCount, new Plant(this.rng.nextInt(grid.xSize)+1,
+                                              this.rng.nextInt(grid.ySize)+1,
+                                              this.rng.nextFloat()*2+0.5f,
+                                              this.rng.nextFloat()/2, plantIdCount--));
         Organism org = organisms.get(plantIdCount+1);
     }
        // stats.recordLife(org.location.x(), org.location.y(), false, (AnimalSpecies)null);
     public void addRandomAnimal(AnimalSpecies species, int x, int y) {
-        Animal animal = new Animal(x, y, species, this.rng.nextFloat(), true);
+        Animal animal = new Animal(x, y, species, this.rng.nextFloat(), true, animalIdCount);
         organisms.put(animalIdCount++, animal);
         grid.tiles[x][y].addAnimal(animal);
        // stats.recordLife(x, x, true, species);
     }
     public void addRandomPlant(int x, int y) {
-        Plant plant = new Plant(x, y, this.rng.nextFloat()*2+0.5f, this.rng.nextFloat()/2);
+        Plant plant = new Plant(x, y, this.rng.nextFloat()*2+0.5f, this.rng.nextFloat()/2, plantIdCount);
         organisms.put(plantIdCount--, plant);
         grid.tiles[x][y].addPlant(plant);
        // stats.recordLife(x, y, true, AnimalSpecies.BEAR); // Species is ignored
