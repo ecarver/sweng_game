@@ -479,7 +479,7 @@ public class SimulationEngine {
             //   fitness and random chance
             if (first.attributes.isCarnivore) {
                 if (second.attributes.isHerbivore) {
-                    if (first.size() > second.size() && first.foodDesire() > 0.0f) {
+                    if (first.size() > second.size() && first.hunger > 0.0f) {
                         // The first will try to eat the second
                         if (first.evolutionaryFitness + first.rng.nextFloat() >
                             second.evolutionaryFitness + second.rng.nextFloat()) {
@@ -497,7 +497,7 @@ public class SimulationEngine {
 
             if (second.attributes.isCarnivore) {
                 if (first.attributes.isHerbivore) {
-                    if (second.size() > first.size() && second.foodDesire() > 0.0f) {
+                    if (second.size() > first.size() && second.hunger > 0.0f) {
                         // The second will try to eat the first
                         if (second.evolutionaryFitness + second.rng.nextFloat() >
                             first.evolutionaryFitness + first.rng.nextFloat()) {
