@@ -21,6 +21,7 @@ public class GLSurf extends GLSurfaceView {
         _renderList = renderList;
         _textQueue = textQueue;
         mRenderer = new GLRenderer(context, _renderList, _textQueue);
+        super.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         setRenderer(mRenderer);
 
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);

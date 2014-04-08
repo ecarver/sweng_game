@@ -150,14 +150,15 @@ class Tile {
         for (Animal animal : this.animals) {
             // Herbivores will try to eat the largest plant
             if (animal.attributes.isHerbivore && plants.size() > 0) {
-                Plant biggestPlant = (Plant)plants.iterator();
+                Plant biggestPlant = new Plant(0, 0, 0.0f, 0.0f, -1.0f, 0);
                 for (Plant currentPlant : localPlants) {
                     if (currentPlant.food > biggestPlant.food) {
                         biggestPlant = currentPlant;
                     }
                 }
                 if (!localPlants.remove(biggestPlant)) {
-                    throw new IndexOutOfBoundsException();
+                    //throw new IndexOutOfBoundsException();
+                    continue;
                 }
                 eventList.add(new SimulationEvent(animal.id, biggestPlant.id, Event.EAT, true));
             }

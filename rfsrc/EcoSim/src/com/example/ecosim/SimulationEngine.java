@@ -522,11 +522,13 @@ public class SimulationEngine {
         int xGoal = candidate.location.x() + x;
         int yGoal = candidate.location.y() + y;
         // Prevent the organism from walking off the map
-        if (xGoal < 0 || xGoal > grid.xSize) {
+        if (xGoal < 0 || xGoal > grid.xSize-1) {
             xGoal = candidate.location.x();
+            x = 0;
         }
-        if (yGoal < 0 || yGoal > grid.ySize) {
+        if (yGoal < 0 || yGoal > grid.ySize-1) {
             yGoal = candidate.location.y();
+            y = 0;
         }
         // Try to move to goal tile
         if (!this.grid.tiles[xGoal][yGoal].fullAnimals()) {
