@@ -83,8 +83,8 @@ class Plant extends Organism implements Comparable<Plant>{
 
 enum AnimalSpecies {
     //      Species water  food   met   spd  entrp   size  aggr   carn    herb
-    BEAR(    "Bear", 2.0f, 9.0f, 0.5f, 0.3f, 0.03f, 10.0f, 0.2f,  true,  false),
-    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.5f, 0.07f,  1.0f, 0.0f, false,   true);
+    BEAR(    "Bear", 2.0f, 9.0f, 0.5f, 0.03f, 0.03f, 10.0f, 0.2f,  true,  false),
+    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.08f, 0.07f,  1.0f, 0.0f, false,   true);
 
     AnimalSpecies(String species, float waterCapacity, float foodCapacity, float metabolicRate,
                   float speed, float agingRate, float size, float aggressiveness,
@@ -176,7 +176,7 @@ class Animal extends Organism implements Comparable<Animal> {
             injury_health -= thirst - attributes.waterCapacity;
         }
 
-        movement += attributes.speed;
+        movement += attributes.speed + 0.02f*evolutionaryFitness + 0.01f*size();
         age += attributes.agingRate;
 
         if (injury_health <= 0.0f || age > 1.0f) {
@@ -190,7 +190,6 @@ class Animal extends Organism implements Comparable<Animal> {
                 injury_health = 1.0f;
             }
         }
-        movement += attributes.speed;
         return false;
     }
 
@@ -588,7 +587,7 @@ public class SimulationEngine {
             return 0;
         case Event.MOVE:
             Animal mover = (Animal)organisms.get(event.firstOrganism);
-            if (!this.simulateMovement(mover, event.x, event.y)) {
+            if (this.simulateMovement(mover, event.x, event.y)) {
             	//stats.switchTile(mover.location.x()-event.x, mover.location.y()-event.y, event.x, event.y, mover.GetSpecies());
                 mover.completeMovement();
                 if (mover.lastAction.equals("Did nothing")) {
@@ -600,7 +599,7 @@ public class SimulationEngine {
             return 1;
         case Event.DEFERRED_MOVE:
             Animal deferred_mover = (Animal)organisms.get(event.firstOrganism);
-            if (!this.simulateMovement(deferred_mover, event.x, event.y)) {
+            if (this.simulateMovement(deferred_mover, event.x, event.y)) {
             	//stats.switchTile(deferred_mover.location.x()-event.x, deferred_mover.location.y()-event.y, event.x, event.y, deferred_mover.GetSpecies());
                 deferred_mover.completeMovement();
                 if (deferred_mover.lastAction.equals("Did nothing")) {
