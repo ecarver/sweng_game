@@ -170,29 +170,41 @@ public class MainActivity extends Activity {
 		} else if(_renderList.getScreen() == _renderList.ECO_MAP) {
 			if(keyCode == 19) {
 				_textQueue.removeText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")");
+				_textQueue.removeText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()));
 				_renderList.deleteRenderLink("tileselect");
 				_tileInfo.moveUp();
+				_textQueue.addText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()), 0, 0, 14, 
+						10, 10, 10, 10, false);
 				_textQueue.addText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")", 410, 10, 11, 
 						10, 10, 10, 10, false);
 				_renderList.addRenderLink(new RenderLink("tileselect", "tileselect", 3, _tileInfo.getXLocation(), _tileInfo.getYLocation()));
 			} else if(keyCode == 20) {
 				_textQueue.removeText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")");
+				_textQueue.removeText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()));
 				_renderList.deleteRenderLink("tileselect");
 				_tileInfo.moveDown();
+				_textQueue.addText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()), 0, 0, 14, 
+						10, 10, 10, 10, false);
 				_textQueue.addText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")", 410, 10, 11, 
 						10, 10, 10, 10, false);
 				_renderList.addRenderLink(new RenderLink("tileselect", "tileselect", 3, _tileInfo.getXLocation(), _tileInfo.getYLocation()));
 			} else if(keyCode == 21) {
 				_textQueue.removeText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")");
+				_textQueue.removeText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()));
 				_renderList.deleteRenderLink("tileselect");
 				_tileInfo.moveLeft();
+				_textQueue.addText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()), 0, 0, 14, 
+						10, 10, 10, 10, false);
 				_textQueue.addText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")", 410, 10, 11, 
 						10, 10, 10, 10, false);
 				_renderList.addRenderLink(new RenderLink("tileselect", "tileselect", 3, _tileInfo.getXLocation(), _tileInfo.getYLocation()));
 			} else if(keyCode == 22) {
 				_textQueue.removeText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")");
+				_textQueue.removeText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()));
 				_renderList.deleteRenderLink("tileselect");
 				_tileInfo.moveRight();
+				_textQueue.addText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()), 0, 0, 14, 
+						10, 10, 10, 10, false);
 				_textQueue.addText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")", 410, 10, 11, 
 						10, 10, 10, 10, false);
 				_renderList.addRenderLink(new RenderLink("tileselect", "tileselect", 3, _tileInfo.getXLocation(), _tileInfo.getYLocation()));
@@ -203,8 +215,7 @@ public class MainActivity extends Activity {
 				//TODO: Step here
 			} else if (keyCode == 62) {
 				_renderList.setScreen(_renderList.STAT_SCREEN);
-				_textQueue.removeText("Name: bear1\nLife Remaining: 55\nLast Action: Fight\n\nName: bear2\nLife Remaining: 55\nLast Action: Fight\n\n"
-						+ "Name: bear3\nLife Remaining: 55\nLast Action: Fight\n\nName: bear4\nLife Remaining: 55\nLast Action: Fight\n\n");
+				_textQueue.removeText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()));
 					_textQueue.removeText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")");
 					_textQueue.removeText("Directional Arrows: Move | Enter Key: Step | Space Key: Stats | Escape Key: Save and Exit");
 				initStatsMenu();
@@ -213,8 +224,8 @@ public class MainActivity extends Activity {
 			} else if (keyCode == 4) {
 				if(verifyExit > 0) {
 					//TODO: Save
-					_textQueue.removeText("Name: bear1\nLife Remaining: 55\nLast Action: Fight\n\nName: bear2\nLife Remaining: 55\nLast Action: Fight\n\n"
-						+ "Name: bear3\nLife Remaining: 55\nLast Action: Fight\n\nName: bear4\nLife Remaining: 55\nLast Action: Fight\n\n");
+					verifyExit--;
+					_textQueue.removeText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()));
 					_textQueue.removeText("Tile(" + _tileInfo.getTileX() + "," + _tileInfo.getTileY() + ")");
 					_textQueue.removeText("Directional Arrows: Move | Enter Key: Step | Space Key: Stats | Escape Key: Save and Exit");
 					_renderList.setScreen(_renderList.START_MENU);
@@ -369,33 +380,8 @@ public class MainActivity extends Activity {
 		//_renderList.clearList();
 		_textQueue.removeText("Up Arrow: Move Up | Down Arrow: Move Down | Enter Key: Select");
 		_renderList.addRenderLink(new RenderLink("sidemenu", "sidemenu", 1, -9.0f, -1.1f));
-		/*
-		_renderList.addRenderLink(new RenderLink("tile0", "watertile", 1, 575f, 488f));
-		_renderList.addRenderLink(new RenderLink("tile1", "grasstile", 1, 703f, 488f));
-		_renderList.addRenderLink(new RenderLink("tile2", "grasstile", 1, 831f, 488f));
-		_renderList.addRenderLink(new RenderLink("tile3", "grasstile", 1, 959f, 488f));
-		_renderList.addRenderLink(new RenderLink("tile4", "grasstile", 1, 575f, 368f));
-		_renderList.addRenderLink(new RenderLink("tile5", "grasstile", 1, 703f, 368f));
-		_renderList.addRenderLink(new RenderLink("tile6", "watertile", 1, 831f, 368f));
-		_renderList.addRenderLink(new RenderLink("tile7", "grasstile", 1, 959, 368f));
-		_renderList.addRenderLink(new RenderLink("tile8", "grasstile", 1, 575f, 248f));
-		_renderList.addRenderLink(new RenderLink("tile9", "grasstile", 1, 703f, 248f));
-		_renderList.addRenderLink(new RenderLink("tile10", "grasstile", 1, 831f, 248f));
-		_renderList.addRenderLink(new RenderLink("tile11", "grasstile", 1, 959f, 248f));
-		_renderList.addRenderLink(new RenderLink("tile12", "watertile", 1, 575f, 128f));
-		_renderList.addRenderLink(new RenderLink("tile13", "grasstile", 1, 703f, 128f));
-		_renderList.addRenderLink(new RenderLink("tile14", "grasstile", 1, 831f, 128f));
-		_renderList.addRenderLink(new RenderLink("tile15", "grasstile", 1, 959f, 128f));
-		
-		//fake code
-		_renderList.addRenderLink(new RenderLink("rabbit1", "rabbit", 2, 959f, 128f));
-		_renderList.addRenderLink(new RenderLink("rabbit2", "rabbit", 2, 959f, 192f));
-		_renderList.addRenderLink(new RenderLink("flower1", "flower", 2, 1023f, 128f));
-		_renderList.addRenderLink(new RenderLink("bear1", "bear", 2, 1023f, 192f));
-		*/
-		//_renderList.addRenderLink(new RenderLink("flower2", "flower", 2, getAnimalLocationX(0,2), getAnimalLocationY(0,2)));
-		_textQueue.addText("Name: bear1\nLife Remaining: 55\nLast Action: Fight\n\nName: bear2\nLife Remaining: 55\nLast Action: Fight\n\n"
-				+ "Name: bear3\nLife Remaining: 55\nLast Action: Fight\n\nName: bear4\nLife Remaining: 55\nLast Action: Fight\n\n", 0, 0, 18, 
+
+		_textQueue.addText(getSideMenuText(_tileInfo.getTileX(), _tileInfo.getTileY()), 0, 0, 14, 
 				10, 10, 10, 10, false);
 		//Actual code
 		_renderList.addRenderLink(new RenderLink("tileselect", "tileselect", 3, _tileInfo.getXLocation(), _tileInfo.getYLocation()));
@@ -449,6 +435,16 @@ public class MainActivity extends Activity {
 		}
 		
 		return locationY;	
+	}
+	
+	public String getSideMenuText(int x, int y) {
+		String temp = "";
+		for(int i = 0; i < organismData[x][y].length; i++) {
+			temp = temp.concat("Name: "+ organismData[x][y][i].getName() + "\nHealth: " + organismData[x][y][i].getHealth() + "\nLast Action: " 
+					+ organismData[x][y][i].getLastAction() + "\n\n");
+		}
+		
+		return temp;
 	}
 
 }

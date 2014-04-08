@@ -11,6 +11,7 @@ abstract class Organism {
     public Organism(int x, int y, String action, int id) {
         this.location = new Location(x, y);
         this.lastAction = action;
+        this.id = id;
     }
     abstract Boolean increase_age();
     Location location;
@@ -40,6 +41,7 @@ class Plant extends Organism implements Comparable<Plant>{
         this.growthRate = growthRate;
         this.food = food;
         this.attributes = PlantSpecies.GENERIC;
+        this.id = id;
     }
     public Plant(int x, int y, float maxFood, float growthRate, int id) {
         this(x, y, maxFood, growthRate, 0.0f, id);
@@ -125,6 +127,7 @@ class Animal extends Organism implements Comparable<Animal> {
         this.lastFood = new Location();
         this.lastWater = new Location();
         this.rng = new Random();
+        this.id = id;
     }
     // public Animal(int x, int y) {
     //     this(x, y);
@@ -572,6 +575,7 @@ public class SimulationEngine {
         Organism org = organisms.get(plantIdCount+1);
     }
        // stats.recordLife(org.location.x(), org.location.y(), false, (AnimalSpecies)null);
+    //
     public void addRandomAnimal(AnimalSpecies species, int x, int y) {
         Animal animal = new Animal(x, y, species, this.rng.nextFloat(), true, animalIdCount);
         organisms.put(animalIdCount++, animal);
