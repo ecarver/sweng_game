@@ -16,11 +16,10 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
-	// Our OpenGL Surfaceview
 	private OrganismInfo organismData[][][];
 	private SimulationEngine engine;
-    private EventQueue eventQueue;
 	private GLSurfaceView glSurfaceView;
+	private EventQueue eventQueue;
 	private GLSurf glSurf;
 	private RenderList _renderList;
 	private TextQueue _textQueue;
@@ -32,7 +31,6 @@ public class MainActivity extends Activity {
              "Press \"Load Simulation\" to resume the last simulation.\n" +
             "Step the simulation forward by pressing \"Step.\"\n" +
             "Move the cursor over a tile to show information on its occupants.\n";
-    private String sideMenuInfo = "";
     private int verifyExit;
 	
 	@SuppressLint({ "InlinedApi", "NewApi" }) @Override
@@ -399,7 +397,7 @@ public class MainActivity extends Activity {
 		_textQueue.addText("Backspace: Return to Start Menu", 1, 670, 12, 
 				10, 10, 10, 10, true);
 	}
-
+	
     // This method assumes that there are only SimulationEvents in the eventQueue
     public void stepSimulation() {
         // Prepare the simulation engine for a step
@@ -458,6 +456,13 @@ public class MainActivity extends Activity {
 			temp = temp.concat("Name: "+ organismData[x][y][i].getName() + "\nHealth: " + organismData[x][y][i].getHealth() + "\nLast Action: " 
 					+ organismData[x][y][i].getLastAction() + "\n\n");
 		}
+		
+		return temp;
+	}
+	
+	public String getStatsText() {
+		String temp = "";
+		
 		
 		return temp;
 	}
