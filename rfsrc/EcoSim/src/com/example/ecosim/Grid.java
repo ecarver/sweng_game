@@ -163,7 +163,9 @@ class Tile {
                 eventList.add(new SimulationEvent(animal.id, biggestPlant.id, Event.EAT, true));
             }
             // Also, every animal will try to drink
-            eventList.add(new SimulationEvent(animal.id, this.environmentType.hasWater));
+            if (this.environmentType.hasWater) {
+                eventList.add(new SimulationEvent(animal.id, this.environmentType.hasWater));
+            }
             // And while we're at it, let's set up move events for each animal that is eligible
             if (animal.movement >= 1.0f) {
                 Location goal = animal.movementGoal();

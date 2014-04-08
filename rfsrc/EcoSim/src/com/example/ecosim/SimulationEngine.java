@@ -84,7 +84,7 @@ class Plant extends Organism implements Comparable<Plant>{
 enum AnimalSpecies {
     //      Species water  food   met   spd  entrp   size  aggr       carn    herb
     BEAR(    "Bear", 2.0f, 9.0f, 0.5f, 0.1f, 0.003f, 10.0f,  0.2f,     true,  false),
-    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.2f, 0.007f,  1.0f, -9999.0f, false,   true);
+    RABBIT("Rabbit", 1.0f, 1.0f, 0.2f, 0.2f, 0.007f,  2.0f, -9999.0f, false,   true);
 
     AnimalSpecies(String species, float waterCapacity, float foodCapacity, float metabolicRate,
                   float speed, float agingRate, float size, float aggressiveness,
